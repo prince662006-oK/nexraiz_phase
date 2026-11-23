@@ -4,3 +4,6 @@ uploads/*
 
 # Dépendances Composer (réinstallables via `composer install`).
 /vendor/
+
+# Fichier parasite vide trouvé à la racine (résidu d'une commande tapée par erreur).
+/-w
