@@ -9,6 +9,7 @@ require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/bootstrap.php'; // fournit pack_steps() (requiert lui-même auth.php)
 require_once __DIR__ . '/notifications.php';
 require_once __DIR__ . '/mailer.php';
+require_once __DIR__ . '/stripe-lite.php';
 
 function payment_config(): array
 {
@@ -51,10 +52,8 @@ function create_stripe_checkout_url(int $paiementId, float $montant, string $num
         throw new RuntimeException("Le paiement par carte n'est pas encore configuré. Merci de choisir un autre moyen de paiement ou de réessayer plus tard.");
     }
 
-    \Stripe\Stripe::setApiKey(payment_config()['stripe']['secret_key']);
-
     try {
-        $session = \Stripe\Checkout\Session::create([
+        $session = nx_stripe_checkout_creer(payment_config()['stripe']['secret_key'], [
             'mode' => 'payment',
             'payment_method_types' => ['card'],
             'line_items' => [[
@@ -69,14 +68,14 @@ function create_stripe_checkout_url(int $paiementId, float $montant, string $num
             'cancel_url' => $cancelUrl,
             'metadata' => ['paiement_id' => (string) $paiementId],
         ]);
-    } catch (\Stripe\Exception\ApiErrorException $e) {
+    } catch (RuntimeException $e) {
         throw new RuntimeException('Stripe a refusé la requête : ' . $e->getMessage());
     }
 
     $stmt = db()->prepare('UPDATE paiements SET reference_externe = ? WHERE id = ?');
-    $stmt->execute([$session->id, $paiementId]);
+    $stmt->execute([$session['id'], $paiementId]);
 
-    return $session->url;
+    return $session['url'];
 }
 
 /**
@@ -85,13 +84,12 @@ function create_stripe_checkout_url(int $paiementId, float $montant, string $num
  */
 function stripe_session_est_payee(string $sessionId): bool
 {
-    \Stripe\Stripe::setApiKey(payment_config()['stripe']['secret_key']);
     try {
-        $session = \Stripe\Checkout\Session::retrieve($sessionId);
-    } catch (\Stripe\Exception\ApiErrorException $e) {
+        $session = nx_stripe_checkout_recuperer(payment_config()['stripe']['secret_key'], $sessionId);
+    } catch (RuntimeException $e) {
         return false;
     }
-    return $session->payment_status === 'paid';
+    return ($session['payment_status'] ?? null) === 'paid';
 }
 
 /**

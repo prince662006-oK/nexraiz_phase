@@ -13,15 +13,15 @@ $sigHeader = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
 $webhookSecret = payment_config()['stripe']['webhook_secret'];
 
 try {
-    $event = \Stripe\Webhook::constructEvent($payload, $sigHeader, $webhookSecret);
+    $event = nx_stripe_webhook_verifier($payload, $sigHeader, $webhookSecret);
 } catch (\Throwable $e) {
     http_response_code(400);
     exit('Signature invalide.');
 }
 
-if ($event->type === 'checkout.session.completed') {
-    $session = $event->data->object;
-    $paiementId = (int) ($session->metadata->paiement_id ?? 0);
+if (($event['type'] ?? '') === 'checkout.session.completed') {
+    $session = $event['data']['object'] ?? [];
+    $paiementId = (int) ($session['metadata']['paiement_id'] ?? 0);
     if ($paiementId > 0) {
         marquer_paiement_paye($paiementId);
     }
