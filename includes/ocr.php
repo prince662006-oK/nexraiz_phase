@@ -14,12 +14,13 @@
  * dossier de langues dédié, sous le stockage privé NexRaiz, contenant une
  * copie du modèle anglais et le modèle français téléchargé pour ce projet.
  */
+require_once __DIR__ . '/db.php';
 
 const NX_TESSERACT_EXE = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe';
 
 function nx_tessdata_dir(): string
 {
-    return dirname(__DIR__, 3) . '/nexraiz_private_storage/tessdata';
+    return nx_racine_stockage_prive() . '/nexraiz_private_storage/tessdata';
 }
 
 function ocr_disponible(): bool

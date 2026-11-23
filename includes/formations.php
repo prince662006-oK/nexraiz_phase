@@ -16,7 +16,7 @@ require_once __DIR__ . '/notifications.php';
  */
 function formations_stockage_prive_racine(): string
 {
-    return dirname(__DIR__, 3) . '/nexraiz_private_storage/certifications';
+    return nx_racine_stockage_prive() . '/nexraiz_private_storage/certifications';
 }
 
 /**

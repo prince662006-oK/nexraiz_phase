@@ -20,7 +20,7 @@ require_once __DIR__ . '/notifications.php';
  */
 function nx_documents_stockage_prive_racine(string $packSlug): string
 {
-    return dirname(__DIR__, 3) . '/nexraiz_private_storage/' . $packSlug . '/documents';
+    return nx_racine_stockage_prive() . '/nexraiz_private_storage/' . $packSlug . '/documents';
 }
 
 /**

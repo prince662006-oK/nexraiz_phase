@@ -14,7 +14,7 @@ require_once __DIR__ . '/documents.php'; // fournit nx_icone_fichier()
  */
 function ressources_stockage_prive_racine(): string
 {
-    return dirname(__DIR__, 3) . '/nexraiz_private_storage/ressources';
+    return nx_racine_stockage_prive() . '/nexraiz_private_storage/ressources';
 }
 
 /**

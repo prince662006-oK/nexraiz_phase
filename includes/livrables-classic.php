@@ -20,7 +20,7 @@ require_once __DIR__ . '/documents.php'; // nx_icone_fichier()
 
 function classic_livrables_stockage_prive_racine(): string
 {
-    return dirname(__DIR__, 3) . '/nexraiz_private_storage/classic/livrables';
+    return nx_racine_stockage_prive() . '/nexraiz_private_storage/classic/livrables';
 }
 
 function classic_livrable_categories(): array

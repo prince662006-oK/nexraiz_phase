@@ -55,7 +55,7 @@ function classic_statuts_documents(): array
  */
 function classic_stockage_prive_racine(): string
 {
-    return dirname(__DIR__, 3) . '/nexraiz_private_storage/classic/documents';
+    return nx_racine_stockage_prive() . '/nexraiz_private_storage/classic/documents';
 }
 
 /**
