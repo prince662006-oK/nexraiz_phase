@@ -1,0 +1,6 @@
+# Fichiers uploadés par les utilisateurs (documents, justificatifs, livrables).
+uploads/*
+!uploads/.gitkeep
+
+# Dépendances Composer (réinstallables via `composer install`).
+/vendor/

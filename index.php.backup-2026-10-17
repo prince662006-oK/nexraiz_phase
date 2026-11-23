@@ -1,0 +1,289 @@
+<?php
+/**
+ * NexRaiz — Page d'accueil
+ * Vitrine de la plateforme : hero, packs disponibles, fonctionnement du
+ * parcours et aperçu des deux espaces (Client / NexRaiz).
+ */
+require __DIR__ . '/includes/bootstrap.php';
+
+// Packs disposant déjà d'un parcours client dédié (sinon fallback vers pack-detail.php).
+$parcoursDisponibles = [
+    'assistance' => 'decouverte.php',
+    'booster'    => 'booster-decouverte.php',
+    'classic'    => 'classic-decouverte.php',
+    'wellbeing'  => 'wellbeing-decouverte.php',
+];
+
+function pack_url_by_slug(string $slug, array $parcoursDisponibles): string
+{
+    return $parcoursDisponibles[$slug] ?? 'pack-detail.php?pack=' . urlencode($slug);
+}
+
+$packsAccueil = [
+    ['slug' => 'classic', 'icone' => 'work', 'icone_bg' => 'bg-primary-container/10 text-primary', 'titre' => 'Pack Classic', 'description' => 'Optimiser le CV, la lettre de motivation, LinkedIn et préparer les entretiens.'],
+    ['slug' => 'booster', 'icone' => 'rocket_launch', 'icone_bg' => 'bg-orange-100 text-orange-600', 'titre' => 'Pack Booster', 'description' => 'Clarifier le projet professionnel, la reconversion, les compétences et la prise de poste.'],
+    ['slug' => 'wellbeing', 'icone' => 'spa', 'icone_bg' => 'bg-purple-100 text-purple-600', 'titre' => 'Kit Wellbeing', 'description' => "Évaluer le stress, la gestion du temps et l'équilibre vie professionnelle / vie personnelle."],
+    ['slug' => 'assistance', 'icone' => 'support_agent', 'icone_bg' => 'bg-blue-100 text-blue-600', 'titre' => 'Pack Assistance', 'description' => "Être accompagné dans une situation professionnelle sensible avec un plan d'action adapté."],
+];
+
+$etapes = [
+    ['icone' => 'person', 'titre' => 'Créer un compte'],
+    ['icone' => 'assignment', 'titre' => 'Qualifier le besoin'],
+    ['icone' => 'calendar_month', 'titre' => 'Prendre rendez-vous'],
+    ['icone' => 'credit_card', 'titre' => 'Effectuer le paiement'],
+    ['icone' => 'show_chart', 'titre' => 'Suivre son dossier'],
+];
+
+$espaceClient = [
+    'Formulaire',
+    'Rendez-vous',
+    'Paiement',
+    'Tableau de bord',
+    'Documents & livrables',
+];
+
+$espaceNexraiz = [
+    'Gestion des dossiers',
+    'Évaluations',
+    'Notes consultant',
+    "Plan d'action",
+    'Suivi & mise à jour',
+];
+
+$sidebarApercu = [
+    ['icone' => 'home', 'label' => 'Accueil', 'actif' => true],
+    ['icone' => 'inventory_2', 'label' => 'Mes packs'],
+    ['icone' => 'event', 'label' => 'Rendez-vous'],
+    ['icone' => 'description', 'label' => 'Documents'],
+    ['icone' => 'credit_card', 'label' => 'Paiements'],
+    ['icone' => 'show_chart', 'label' => 'Suivi'],
+];
+
+$suiviParcours = [
+    ['titre' => 'Demande reçue', 'date' => '10 mai 2024', 'statut' => 'done'],
+    ['titre' => 'Analyse en cours', 'date' => '12 mai 2024', 'statut' => 'current'],
+    ['titre' => "Plan d'action", 'date' => 'À venir', 'statut' => 'pending'],
+    ['titre' => 'Clôture', 'date' => 'À venir', 'statut' => 'pending'],
+];
+
+render_head('NexRaiz — La plateforme digitale d\'accompagnement', 'Accédez à des parcours personnalisés pour votre carrière, votre bien-être et vos besoins professionnels.');
+render_top_header('accueil');
+?>
+<main class="flex flex-col relative w-full pt-16 pb-space-4xl md:pb-space-2xl bg-surface">
+
+<!-- HERO -->
+<section class="w-full px-gutter-mobile lg:px-gutter-desktop py-space-xl md:py-space-2xl relative overflow-hidden">
+  <div class="absolute -top-12 -left-12 w-72 h-72 rounded-full bg-primary-container/5 blur-3xl pointer-events-none"></div>
+  <div class="max-w-max-width-content mx-auto grid grid-cols-1 lg:grid-cols-2 gap-space-xl items-center relative z-10">
+    <div class="flex flex-col gap-space-md">
+      <h1 class="font-headline-xl-mobile text-headline-xl-mobile md:font-display-lg md:text-display-lg text-on-surface font-bold tracking-tight">La plateforme digitale d'accompagnement NexRaiz</h1>
+      <p class="font-body-md text-body-md md:font-body-lg md:text-body-lg text-secondary max-w-max-width-reading">Accédez à des parcours personnalisés pour votre carrière, votre bien-être et vos besoins professionnels.</p>
+      <div class="flex flex-col sm:flex-row gap-space-sm pt-space-xs">
+        <a href="#catalogue-packs" class="h-12 px-space-lg rounded-xl bg-primary-container text-white font-label-lg text-label-lg flex items-center justify-center gap-space-2xs shadow-sm hover:bg-primary transition-all active:scale-[0.99]">
+          <span>Découvrir les packs</span>
+        </a>
+        <a href="mon-espace.php" class="h-12 px-space-lg rounded-xl border border-outline-variant text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-space-2xs hover:bg-surface-container-low transition-colors">
+          <span class="material-symbols-outlined text-[18px]">person</span>
+          <span>Accéder à mon espace</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-2xl shadow-lg border border-outline-variant/40 p-space-md flex flex-col gap-space-sm">
+      <div class="flex items-center gap-1.5 pb-space-xs border-b border-outline-variant/50">
+        <img src="uploads/LOGO0.png" alt="NexRaiz" class="h-8 w-auto">
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-label-lg text-label-lg text-on-surface font-bold">Bonjour, Marie 👋</p>
+          <p class="font-body-sm text-[11px] text-secondary">Bienvenue dans votre espace d'accompagnement</p>
+        </div>
+        <div class="w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center font-label-md text-label-md font-bold shrink-0">M</div>
+      </div>
+      <div class="grid grid-cols-4 gap-space-2xs">
+        <div class="flex flex-col gap-space-2xs bg-surface-container-low rounded-lg p-space-xs">
+          <span class="material-symbols-outlined text-[16px] text-primary">route</span>
+          <span class="font-headline-sm text-headline-sm text-on-surface font-bold">1</span>
+          <span class="font-body-sm text-[9px] text-secondary leading-tight">Parcours en cours</span>
+        </div>
+        <div class="flex flex-col gap-space-2xs bg-surface-container-low rounded-lg p-space-xs">
+          <span class="material-symbols-outlined text-[16px] text-primary">event</span>
+          <span class="font-headline-sm text-headline-sm text-on-surface font-bold">2</span>
+          <span class="font-body-sm text-[9px] text-secondary leading-tight">Rendez-vous à venir</span>
+        </div>
+        <div class="flex flex-col gap-space-2xs bg-surface-container-low rounded-lg p-space-xs">
+          <span class="material-symbols-outlined text-[16px] text-primary">description</span>
+          <span class="font-headline-sm text-headline-sm text-on-surface font-bold">3</span>
+          <span class="font-body-sm text-[9px] text-secondary leading-tight">Documents transmis</span>
+        </div>
+        <div class="flex flex-col gap-space-2xs bg-surface-container-low rounded-lg p-space-xs">
+          <span class="material-symbols-outlined text-[16px] text-primary">checklist</span>
+          <span class="font-headline-sm text-headline-sm text-on-surface font-bold">4</span>
+          <span class="font-body-sm text-[9px] text-secondary leading-tight">Actions en attente</span>
+        </div>
+      </div>
+      <div class="bg-surface-container-low rounded-xl p-space-sm flex flex-col gap-space-xs">
+        <p class="font-label-md text-label-md text-on-surface font-bold">Progression du parcours</p>
+        <div class="flex items-start gap-0">
+          <?php foreach ($suiviParcours as $i => $e): ?>
+          <div class="flex flex-col items-center flex-1 gap-space-2xs relative">
+            <?php if ($i > 0): ?>
+            <div class="absolute top-3 right-1/2 w-full h-0 border-t-2 <?php echo $e['statut'] !== 'pending' ? 'border-primary-container/60' : 'border-dashed border-outline-variant'; ?>" style="left:-50%"></div>
+            <?php endif; ?>
+            <div class="relative z-10 w-6 h-6 rounded-full flex items-center justify-center font-label-md text-[10px] font-bold <?php echo $e['statut'] === 'pending' ? 'bg-surface-container-lowest border-2 border-outline-variant text-secondary' : 'bg-primary-container text-white'; ?>">
+              <?php echo $e['statut'] === 'done' ? '<span class="material-symbols-outlined text-[12px]">check</span>' : ($i + 1); ?>
+            </div>
+            <span class="font-body-sm text-[9px] text-secondary text-center leading-tight"><?php echo htmlspecialchars($e['titre']); ?></span>
+          </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHOISISSEZ VOTRE PARCOURS -->
+<section id="catalogue-packs" class="w-full px-gutter-mobile lg:px-gutter-desktop py-space-xl">
+  <div class="max-w-max-width-content mx-auto flex flex-col gap-space-lg">
+    <h2 class="text-center font-headline-xl-mobile text-headline-xl-mobile md:font-headline-xl md:text-headline-xl text-on-surface font-bold">Choisissez votre parcours</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+      <?php foreach ($packsAccueil as $p): ?>
+      <div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+        <div class="w-12 h-12 rounded-full <?php echo $p['icone_bg']; ?> flex items-center justify-center">
+          <span class="material-symbols-outlined text-[24px]"><?php echo $p['icone']; ?></span>
+        </div>
+        <h3 class="font-headline-sm text-headline-sm text-on-surface font-bold"><?php echo htmlspecialchars($p['titre']); ?></h3>
+        <p class="font-body-sm text-body-sm text-secondary leading-relaxed flex-1"><?php echo htmlspecialchars($p['description']); ?></p>
+        <a href="<?php echo htmlspecialchars(pack_url_by_slug($p['slug'], $parcoursDisponibles)); ?>" class="h-11 rounded-xl border border-outline-variant text-on-surface font-label-lg text-label-lg flex items-center justify-center hover:bg-surface-container-low transition-colors">Voir le parcours</a>
+      </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+
+<!-- COMMENT CA MARCHE -->
+<section class="w-full px-gutter-mobile lg:px-gutter-desktop py-space-xl bg-surface-container-low">
+  <div class="max-w-max-width-content mx-auto flex flex-col gap-space-lg">
+    <h2 class="text-center font-headline-xl-mobile text-headline-xl-mobile md:font-headline-xl md:text-headline-xl text-on-surface font-bold">Comment ça marche</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-space-md">
+      <?php foreach ($etapes as $i => $e): ?>
+      <div class="flex flex-col items-center text-center gap-space-xs relative">
+        <?php if ($i > 0): ?>
+        <div class="hidden sm:block absolute top-4 right-1/2 w-full h-0 border-t-2 border-dashed border-outline-variant" style="left:-50%"></div>
+        <?php endif; ?>
+        <div class="relative z-10 w-9 h-9 rounded-full bg-primary-container text-white flex items-center justify-center font-label-lg text-label-lg font-bold"><?php echo $i + 1; ?></div>
+        <div class="w-11 h-11 rounded-full bg-surface-container-lowest shadow-sm text-primary flex items-center justify-center"><span class="material-symbols-outlined text-[22px]"><?php echo $e['icone']; ?></span></div>
+        <span class="font-label-md text-label-md text-on-surface font-semibold"><?php echo ($i + 1) . '. ' . htmlspecialchars($e['titre']); ?></span>
+      </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</section>
+
+<!-- DEUX ESPACES COMPLEMENTAIRES -->
+<section class="w-full px-gutter-mobile lg:px-gutter-desktop py-space-xl">
+  <div class="max-w-max-width-content mx-auto flex flex-col gap-space-lg">
+    <h2 class="text-center font-headline-xl-mobile text-headline-xl-mobile md:font-headline-xl md:text-headline-xl text-on-surface font-bold">Deux espaces complémentaires</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+      <div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary-container/10 to-surface-container-low p-space-lg flex flex-col gap-space-sm">
+        <div class="w-11 h-11 rounded-full bg-primary-container/15 text-primary flex items-center justify-center"><span class="material-symbols-outlined text-[22px]">person</span></div>
+        <h3 class="font-headline-md text-headline-md text-on-surface font-bold">Espace Client</h3>
+        <ul class="flex flex-col gap-space-2xs">
+          <?php foreach ($espaceClient as $item): ?>
+          <li class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface"><span class="material-symbols-outlined text-[16px] text-primary">check</span><?php echo htmlspecialchars($item); ?></li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+      <div class="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-100/60 to-surface-container-low p-space-lg flex flex-col gap-space-sm">
+        <div class="w-11 h-11 rounded-full bg-blue-200/60 text-blue-700 flex items-center justify-center"><span class="material-symbols-outlined text-[22px]">groups</span></div>
+        <h3 class="font-headline-md text-headline-md text-on-surface font-bold">Espace NexRaiz</h3>
+        <ul class="flex flex-col gap-space-2xs">
+          <?php foreach ($espaceNexraiz as $item): ?>
+          <li class="flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface"><span class="material-symbols-outlined text-[16px] text-blue-700">check</span><?php echo htmlspecialchars($item); ?></li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- APERCU TABLEAU DE BORD -->
+<section class="w-full px-gutter-mobile lg:px-gutter-desktop py-space-xl">
+  <div class="max-w-max-width-content mx-auto rounded-2xl shadow-lg overflow-hidden border border-outline-variant/40 flex flex-col md:flex-row">
+    <aside class="md:w-56 shrink-0 bg-inverse-surface text-inverse-on-surface p-space-md flex flex-col gap-space-2xs">
+      <span class="flex items-center gap-1.5 pb-space-sm">
+        <span class="inline-flex bg-white rounded-lg px-2 py-1"><img src="uploads/LOGO0.png" alt="NexRaiz" class="h-8 w-auto"></span>
+      </span>
+      <?php foreach ($sidebarApercu as $item): ?>
+      <span class="flex items-center gap-space-xs px-space-xs py-space-sm rounded-xl <?php echo !empty($item['actif']) ? 'bg-white/10 text-white font-bold' : 'text-inverse-on-surface/75'; ?>">
+        <span class="material-symbols-outlined text-[18px]"><?php echo $item['icone']; ?></span>
+        <span class="font-label-lg text-label-lg"><?php echo htmlspecialchars($item['label']); ?></span>
+      </span>
+      <?php endforeach; ?>
+    </aside>
+    <div class="flex-1 bg-surface-container-lowest p-space-lg flex flex-col gap-space-md">
+      <div class="flex items-center justify-between flex-wrap gap-space-sm">
+        <div>
+          <p class="font-headline-sm text-headline-sm text-on-surface font-bold">Bonjour, Marie 👋</p>
+          <p class="font-body-sm text-body-sm text-secondary">Voici un aperçu de votre activité</p>
+        </div>
+        <a href="mon-espace.php" class="h-10 px-space-md rounded-xl border border-outline-variant text-on-surface font-label-md text-label-md flex items-center justify-center gap-1 hover:bg-surface-container-low transition-colors">Voir mon parcours <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-space-sm">
+        <div class="bg-surface-container-low rounded-xl p-space-sm flex flex-col gap-space-2xs items-center text-center">
+          <div class="relative w-14 h-14 rounded-full flex items-center justify-center" style="background:conic-gradient(#1E3E62 0% 65%, #dae2fd 65% 100%)">
+            <div class="w-10 h-10 rounded-full bg-surface-container-low flex items-center justify-center font-label-md text-[11px] font-bold text-primary">65%</div>
+          </div>
+          <p class="font-label-md text-label-md text-on-surface font-semibold">Progression du parcours</p>
+          <p class="font-body-sm text-[11px] text-secondary">Analyse en cours · Étape 2 sur 4</p>
+          <a href="#" class="font-label-md text-[11px] text-primary flex items-center gap-1">Voir le détail <span class="material-symbols-outlined text-[12px]">arrow_forward</span></a>
+        </div>
+        <div class="bg-surface-container-low rounded-xl p-space-sm flex flex-col gap-space-xs">
+          <div class="w-9 h-9 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">event</span></div>
+          <p class="font-label-lg text-label-lg text-on-surface font-bold">Jeudi 23 mai 2024</p>
+          <p class="font-body-sm text-[11px] text-secondary">10:00 – 11:00 · Entretien avec votre consultant</p>
+          <a href="#" class="font-label-md text-[11px] text-primary flex items-center gap-1">Voir mes rendez-vous <span class="material-symbols-outlined text-[12px]">arrow_forward</span></a>
+        </div>
+        <div class="bg-surface-container-low rounded-xl p-space-sm flex flex-col gap-space-xs">
+          <div class="w-9 h-9 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">folder</span></div>
+          <p class="font-headline-sm text-headline-sm text-on-surface font-bold">3</p>
+          <p class="font-body-sm text-[11px] text-secondary">documents envoyés</p>
+          <a href="#" class="font-label-md text-[11px] text-primary flex items-center gap-1">Accéder aux documents <span class="material-symbols-outlined text-[12px]">arrow_forward</span></a>
+        </div>
+        <div class="bg-surface-container-low rounded-xl p-space-sm flex flex-col gap-space-xs">
+          <div class="w-9 h-9 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">checklist</span></div>
+          <p class="font-headline-sm text-headline-sm text-on-surface font-bold">2</p>
+          <p class="font-body-sm text-[11px] text-secondary">actions en attente</p>
+          <a href="#" class="font-label-md text-[11px] text-primary flex items-center gap-1">Voir mes actions <span class="material-symbols-outlined text-[12px]">arrow_forward</span></a>
+        </div>
+        <div class="bg-surface-container-low rounded-xl p-space-sm flex flex-col gap-space-xs">
+          <div class="w-9 h-9 rounded-lg bg-primary-container/10 text-primary flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">card_giftcard</span></div>
+          <p class="font-headline-sm text-headline-sm text-on-surface font-bold">1</p>
+          <p class="font-body-sm text-[11px] text-secondary">livrable disponible</p>
+          <a href="#" class="font-label-md text-[11px] text-primary flex items-center gap-1">Accéder aux livrables <span class="material-symbols-outlined text-[12px]">arrow_forward</span></a>
+        </div>
+      </div>
+
+      <div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-sm">
+        <p class="font-label-lg text-label-lg text-on-surface font-bold">Suivi du parcours</p>
+        <div class="flex items-start gap-0">
+          <?php foreach ($suiviParcours as $i => $e): ?>
+          <div class="flex flex-col items-center flex-1 gap-space-2xs relative">
+            <?php if ($i > 0): ?>
+            <div class="absolute top-4 right-1/2 w-full h-0 border-t-2 <?php echo $e['statut'] !== 'pending' ? 'border-primary-container/60' : 'border-dashed border-outline-variant'; ?>" style="left:-50%"></div>
+            <?php endif; ?>
+            <div class="relative z-10 w-8 h-8 rounded-full flex items-center justify-center font-label-md text-label-md font-bold <?php echo $e['statut'] === 'pending' ? 'bg-surface-container-lowest border-2 border-outline-variant text-secondary' : 'bg-primary-container text-white'; ?>">
+              <?php echo $e['statut'] === 'done' ? '<span class="material-symbols-outlined text-[16px]">check</span>' : ($i + 1); ?>
+            </div>
+            <span class="font-label-md text-label-md text-center <?php echo $e['statut'] === 'current' ? 'text-on-surface font-bold' : 'text-secondary'; ?>"><?php echo htmlspecialchars($e['titre']); ?></span>
+            <span class="font-body-sm text-[11px] text-secondary"><?php echo htmlspecialchars($e['date']); ?></span>
+          </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<?php render_footer(); ?>
