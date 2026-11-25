@@ -2,11 +2,12 @@
 require __DIR__ . '/includes/bootstrap.php';
 
 // Identité visuelle dédiée au Pack Assistance RH (maquette "Cabinet
-// d'excellence" fournie par la patronne) : bleu marine #13203F (fonds
-// sombres), bleu NexRaiz #2563EB (identique au bouton "Commencer" du site —
-// accents, CTA), jaune or #FFC700 (accent secondaire), jaune or foncé
-// #8A6D00 (texte sur fond clair), fond de page #F8F9FF, surfaces
-// #EFF4FF / #E5EEFF / #DCE9FF, texte #0B1C30, texte secondaire #444653.
+// d'excellence" fournie par la patronne), simplifiée à une seule famille de
+// bleus NexRaiz pour une palette plus sobre et douce : bleu marine #13203F
+// (fonds sombres), bleu NexRaiz #2563EB (identique au bouton "Commencer" du
+// site — accents, CTA), bleu clair #93C5FD / #60A5FA (accents sur fond
+// sombre), fond de page #F8F9FF, surfaces #EFF4FF / #E5EEFF / #DCE9FF,
+// texte #0B1C30, texte secondaire #444653.
 
 $situations = [
     ['slug' => 'negociation', 'icone' => 'account_balance_wallet', 'label' => 'Négociation salariale', 'texte' => "Faire le point sur vos arguments et préparer sereinement la discussion."],
@@ -54,7 +55,7 @@ main{overflow-x:hidden;}
 .reveal-right{transform:translateX(24px);}
 .reveal-up.is-visible,.reveal-scale.is-visible,.reveal-left.is-visible,.reveal-right.is-visible{opacity:1;transform:translate(0,0) scale(1);}
 @media (prefers-reduced-motion:reduce){.reveal-up,.reveal-scale,.reveal-left,.reveal-right{transition:none;opacity:1;transform:none;}}
-@keyframes pa-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,199,0,.4);}50%{box-shadow:0 0 0 7px rgba(255,199,0,0);}}
+@keyframes pa-pulse{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.4);}50%{box-shadow:0 0 0 7px rgba(37,99,235,0);}}
 .pa-pulse{animation:pa-pulse 2.4s ease-in-out infinite;}
 .pa-photo-tile{transform:rotate(-1deg);transition:transform .5s ease;}
 .pa-photo-tile:hover{transform:rotate(0deg);}
@@ -66,7 +67,7 @@ main{overflow-x:hidden;}
 <section class="w-full bg-[#1E3650] text-white px-gutter-mobile lg:px-gutter-desktop py-space-xs">
   <div class="max-w-max-width-content mx-auto flex flex-wrap items-center justify-between gap-space-sm font-body-sm text-[12px]">
     <span class="flex items-center gap-space-xs flex-wrap">
-      <span class="material-symbols-outlined text-[16px] text-[#FFE58A]">support_agent</span>
+      <span class="material-symbols-outlined text-[16px] text-[#93C5FD]">support_agent</span>
       <span class="font-label-md font-bold">Ligne d'écoute :</span>
       <span>[numéro d'urgence local]</span>
       <span class="text-white/30">|</span>
@@ -82,7 +83,7 @@ main{overflow-x:hidden;}
 <!-- HERO -->
 <section class="relative w-full overflow-hidden bg-[#13203F] text-white">
   <div class="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-[#2563EB]/40 blur-3xl pointer-events-none"></div>
-  <div class="absolute -left-20 bottom-0 w-80 h-80 rounded-full bg-[#FFC700]/10 blur-2xl pointer-events-none"></div>
+  <div class="absolute -left-20 bottom-0 w-80 h-80 rounded-full bg-[#2563EB]/10 blur-2xl pointer-events-none"></div>
   <div class="relative z-10 max-w-max-width-content mx-auto px-gutter-mobile lg:px-gutter-desktop pt-space-xl pb-space-2xl">
     <nav aria-label="Fil d'ariane" class="reveal-up is-visible flex items-center gap-space-2xs font-body-sm text-body-sm text-white/60 flex-wrap pb-space-md">
       <a href="index.php#accompagnements" class="hover:text-white transition-colors">Nos Packs</a>
@@ -92,11 +93,11 @@ main{overflow-x:hidden;}
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
       <div class="lg:col-span-7 reveal-left is-visible flex flex-col items-start gap-space-md">
         <div class="inline-flex items-center gap-space-xs px-space-sm py-1.5 rounded-full bg-white/10 backdrop-blur-md">
-          <span class="w-2 h-2 rounded-full bg-[#FFC700]"></span>
+          <span class="w-2 h-2 rounded-full bg-[#2563EB]"></span>
           <span class="font-label-md text-[11px] tracking-wide text-white/90 uppercase">Pack Assistance RH · NexRaiz</span>
         </div>
         <h1 class="font-headline-xl-mobile text-headline-xl-mobile md:font-display-lg md:text-display-lg text-white font-bold tracking-tight leading-[1.1]">
-          Une difficulté au travail ?<br>Vous n'avez pas à l'affronter <span class="text-[#FFE58A]">seul·e</span>.
+          Une difficulté au travail ?<br>Vous n'avez pas à l'affronter <span class="text-[#93C5FD]">seul·e</span>.
         </h1>
         <p class="font-body-md text-body-md md:font-body-lg md:text-body-lg text-white/75 max-w-2xl leading-relaxed">
           NexRaiz vous écoute, vous aide à y voir clair et vous guide pas à pas face à une situation professionnelle sensible : négociation, conflit, harcèlement présumé ou licenciement contesté — en toute confidentialité.
@@ -109,16 +110,16 @@ main{overflow-x:hidden;}
           </div>
         </div>
         <div class="flex flex-wrap gap-space-sm pt-space-2xs">
-          <a href="<?php echo htmlspecialchars(step_url(2, 'assistance')); ?>" class="pa-pulse h-12 px-space-lg rounded-lg bg-[#FFC700] text-[#13203F] font-label-lg text-label-lg flex items-center justify-center gap-space-2xs shadow-[0_4px_16px_rgba(255,199,0,0.35)] hover:bg-[#E6B400] hover:-translate-y-0.5 transition-all duration-200">
+          <a href="<?php echo htmlspecialchars(step_url(2, 'assistance')); ?>" class="pa-pulse h-12 px-space-lg rounded-lg bg-[#2563EB] text-white font-label-lg text-label-lg flex items-center justify-center gap-space-2xs shadow-[0_4px_16px_rgba(37,99,235,0.35)] hover:bg-[#1d4ed8] hover:-translate-y-0.5 transition-all duration-200">
             <span>Échanger avec un conseiller</span>
             <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
           </a>
         </div>
 
         <div class="pt-space-sm flex flex-wrap items-center gap-space-lg text-white/80 font-body-sm text-[13px]">
-          <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[#FFC700] text-[18px]">lock</span>100 % confidentiel</span>
-          <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[#FFC700] text-[18px]">spa</span>Écoute sans jugement</span>
-          <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[#FFC700] text-[18px]">verified_user</span>Conforme au RGPD</span>
+          <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[#2563EB] text-[18px]">lock</span>100 % confidentiel</span>
+          <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[#2563EB] text-[18px]">spa</span>Écoute sans jugement</span>
+          <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[#2563EB] text-[18px]">verified_user</span>Conforme au RGPD</span>
         </div>
       </div>
 
@@ -175,7 +176,7 @@ main{overflow-x:hidden;}
 <!-- 3 Piliers -->
 <section class="w-full max-w-max-width-content mx-auto px-gutter-mobile lg:px-gutter-desktop py-space-2xl">
   <div class="text-center max-w-3xl mx-auto mb-space-xl">
-    <span class="font-label-md text-label-md text-[#FFC700] uppercase tracking-wider font-bold">Notre méthode</span>
+    <span class="font-label-md text-label-md text-[#2563EB] uppercase tracking-wider font-bold">Notre méthode</span>
     <h2 class="font-headline-xl-mobile text-headline-xl-mobile md:font-headline-xl md:text-headline-xl text-[#0B1C30] font-bold tracking-tight mt-2">Un accompagnement humain, structuré et confidentiel</h2>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
@@ -192,7 +193,7 @@ main{overflow-x:hidden;}
         <p class="font-body-md text-body-md text-white/80 leading-relaxed"><?php echo htmlspecialchars($p['texte']); ?></p>
       </div>
       <div class="pt-space-lg">
-        <span class="inline-flex items-center gap-1 font-label-md text-label-md text-[#FFE58A] font-semibold group-hover:translate-x-1 transition-transform">
+        <span class="inline-flex items-center gap-1 font-label-md text-label-md text-[#93C5FD] font-semibold group-hover:translate-x-1 transition-transform">
           <?php echo htmlspecialchars($p['lien']); ?> <span class="material-symbols-outlined text-[16px]">chevron_right</span>
         </span>
       </div>
@@ -212,9 +213,9 @@ main{overflow-x:hidden;}
           Un changement ou une difficulté au travail ne doit jamais être subi seul·e. Que vous viviez une négociation délicate, un conflit, une rupture conventionnelle ou un licenciement contesté, un consultant NexRaiz vous aide à construire un plan d'action clair et confidentiel.
         </p>
         <ul class="flex flex-col gap-space-xs font-body-md text-body-md text-[#0B1C30] py-space-2xs">
-          <li class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[#FFC700] text-[18px]">check_circle</span>Diagnostic de votre situation et de vos options</li>
-          <li class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[#FFC700] text-[18px]">check_circle</span>Préparation de vos échanges et de vos documents</li>
-          <li class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[#FFC700] text-[18px]">check_circle</span>Orientation vers un professionnel si nécessaire</li>
+          <li class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[#2563EB] text-[18px]">check_circle</span>Diagnostic de votre situation et de vos options</li>
+          <li class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[#2563EB] text-[18px]">check_circle</span>Préparation de vos échanges et de vos documents</li>
+          <li class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[#2563EB] text-[18px]">check_circle</span>Orientation vers un professionnel si nécessaire</li>
         </ul>
         <a href="<?php echo htmlspecialchars(step_url(2, 'assistance')); ?>" class="mt-space-2xs inline-flex items-center gap-space-xs px-space-md py-3 rounded-lg bg-[#13203F] hover:bg-[#2563EB] text-white font-label-lg text-label-lg transition-colors shadow-md">
           <span>Commencer ma demande</span>
@@ -240,7 +241,7 @@ main{overflow-x:hidden;}
         </div>
       </div>
       <div class="lg:col-span-6 reveal-right flex flex-col items-start gap-space-md">
-        <span class="font-label-md text-label-md text-[#FFC700] uppercase font-bold tracking-wider">Managers & Ressources Humaines</span>
+        <span class="font-label-md text-label-md text-[#2563EB] uppercase font-bold tracking-wider">Managers & Ressources Humaines</span>
         <h2 class="font-headline-lg text-headline-lg text-[#0B1C30] font-bold tracking-tight">Orientez un collaborateur en toute sérénité</h2>
         <p class="font-body-lg text-body-lg text-[#444653] leading-relaxed">
           Vous accompagnez une équipe ou un collaborateur qui traverse une période difficile ? NexRaiz propose un espace d'écoute confidentiel, indépendant de la ligne hiérarchique, pour l'aider à avancer — sans jamais partager le contenu des échanges sans accord.
@@ -250,7 +251,7 @@ main{overflow-x:hidden;}
           <li class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[#13203F] text-[18px]">check_circle</span>Orientation rapide vers le bon type d'accompagnement</li>
           <li class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[#13203F] text-[18px]">check_circle</span>Un espace neutre, extérieur à l'entreprise</li>
         </ul>
-        <a href="contact.php" class="mt-space-2xs inline-flex items-center gap-space-xs px-space-md py-3 rounded-lg bg-[#FFC700] hover:bg-[#E6B400] text-[#13203F] font-label-lg text-label-lg transition-all shadow-[0_4px_14px_rgba(255,199,0,0.3)]">
+        <a href="contact.php" class="mt-space-2xs inline-flex items-center gap-space-xs px-space-md py-3 rounded-lg bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-label-lg text-label-lg transition-all shadow-[0_4px_14px_rgba(37,99,235,0.3)]">
           <span>Nous contacter</span>
           <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </a>
@@ -262,7 +263,7 @@ main{overflow-x:hidden;}
 <!-- Quelle situation vous concerne -->
 <section class="w-full max-w-max-width-content mx-auto px-gutter-mobile lg:px-gutter-desktop py-space-2xl">
   <div class="text-center max-w-3xl mx-auto mb-space-xl">
-    <span class="font-label-md text-label-md text-[#FFC700] uppercase font-bold">Vous vous reconnaissez ?</span>
+    <span class="font-label-md text-label-md text-[#2563EB] uppercase font-bold">Vous vous reconnaissez ?</span>
     <h2 class="font-headline-xl-mobile text-headline-xl-mobile md:font-headline-xl md:text-headline-xl text-[#0B1C30] font-bold mt-2">Quelle situation vous concerne</h2>
   </div>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-space-md">
@@ -287,12 +288,12 @@ main{overflow-x:hidden;}
         <div class="absolute top-4 left-4 bg-[#13203F] text-white px-3 py-1 rounded-md font-label-sm text-[11px] shadow">Ressource gratuite</div>
       </div>
       <div class="lg:col-span-7 p-space-lg lg:p-space-xl flex flex-col items-start">
-        <span class="font-label-md text-label-md text-[#8A6D00] uppercase font-bold tracking-wide">Carnet « Journal des faits »</span>
+        <span class="font-label-md text-label-md text-[#2563EB] uppercase font-bold tracking-wide">Carnet « Journal des faits »</span>
         <h2 class="font-headline-lg text-headline-lg text-[#0B1C30] font-bold mt-space-2xs">Gardez une trace claire de ce que vous vivez</h2>
         <p class="font-body-md text-body-md text-[#444653] mt-space-sm max-w-xl leading-relaxed">
           Un support simple pour noter dates, faits et témoins au fur et à mesure — utile pour y voir clair, et pour préparer votre dossier si vous décidez d'aller plus loin.
         </p>
-        <a href="ressources-assistance/journal-des-faits.txt" download class="mt-space-lg inline-flex items-center gap-space-xs h-12 px-space-lg rounded-lg bg-[#FFC700] hover:bg-[#E6B400] text-[#13203F] font-label-lg text-label-lg transition-colors shadow-md">
+        <a href="ressources-assistance/journal-des-faits.txt" download class="mt-space-lg inline-flex items-center gap-space-xs h-12 px-space-lg rounded-lg bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-label-lg text-label-lg transition-colors shadow-md">
           <span class="material-symbols-outlined text-[18px]">download</span>
           <span>Télécharger gratuitement</span>
         </a>
@@ -312,7 +313,7 @@ main{overflow-x:hidden;}
     <div class="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-lg">
       <div class="hidden lg:block absolute top-10 left-[12%] right-[12%] h-0 border-t-2 border-dashed border-[#2563EB]/25"></div>
       <?php
-      $degradesEtapes = ['from-[#2563EB] to-[#13203F]', 'from-[#F2A900] to-[#8A6D00]', 'from-[#13203F] to-[#0B192C]', 'from-[#2563EB] to-[#1E3650]'];
+      $degradesEtapes = ['from-[#2563EB] to-[#13203F]', 'from-[#60A5FA] to-[#2563EB]', 'from-[#13203F] to-[#0B192C]', 'from-[#2563EB] to-[#1E3650]'];
       foreach ($etapesAccompagnement as $i => $e):
       ?>
       <div class="reveal-up group relative bg-white rounded-2xl p-space-lg pt-space-xl shadow-[0_4px_20px_rgba(11,28,48,0.07)] hover:shadow-[0_16px_36px_rgba(11,28,48,0.14)] hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center gap-space-sm" style="transition-delay:<?php echo $i * 90; ?>ms">
@@ -331,26 +332,26 @@ main{overflow-x:hidden;}
 <!-- Vos intervenants -->
 <section class="w-full bg-[#13203F] py-space-2xl relative overflow-hidden">
   <div class="absolute -right-24 top-10 w-80 h-80 rounded-full bg-[#2563EB]/20 blur-3xl pointer-events-none"></div>
-  <div class="absolute -left-20 bottom-0 w-72 h-72 rounded-full bg-[#FFC700]/10 blur-3xl pointer-events-none"></div>
+  <div class="absolute -left-20 bottom-0 w-72 h-72 rounded-full bg-[#2563EB]/10 blur-3xl pointer-events-none"></div>
   <div class="relative max-w-max-width-content mx-auto px-gutter-mobile lg:px-gutter-desktop flex flex-col gap-space-xl">
     <div class="reveal-up flex flex-col items-center text-center gap-space-2xs">
-      <span class="font-label-md text-label-md text-[#FFC700] uppercase font-bold tracking-wider">Vos intervenants</span>
+      <span class="font-label-md text-label-md text-[#2563EB] uppercase font-bold tracking-wider">Vos intervenants</span>
       <h2 class="font-headline-xl-mobile text-headline-xl-mobile md:font-headline-xl md:text-headline-xl text-white font-bold tracking-tight">Des personnes formées pour vous écouter</h2>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-lg">
       <?php foreach ($intervenants as $i => $it): ?>
       <div class="reveal-scale group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-space-lg pt-space-xl flex flex-col items-center text-center gap-space-xs hover:bg-white/10 hover:-translate-y-2 transition-all duration-300" style="transition-delay:<?php echo $i * 100; ?>ms">
         <?php if ($it['photo']): ?>
-        <div class="relative w-28 h-28 rounded-full p-1 bg-gradient-to-br from-[#FFC700] to-[#2563EB] group-hover:scale-105 transition-transform duration-300">
+        <div class="relative w-28 h-28 rounded-full p-1 bg-gradient-to-br from-[#60A5FA] to-[#2563EB] group-hover:scale-105 transition-transform duration-300">
           <img src="<?php echo htmlspecialchars($it['photo']); ?>" alt="Photo d'illustration — <?php echo htmlspecialchars($it['role']); ?>" class="w-full h-full rounded-full object-cover ring-4 ring-[#13203F]">
         </div>
         <?php else: ?>
-        <div class="w-28 h-28 rounded-full p-1 bg-gradient-to-br from-[#FFC700] to-[#2563EB] group-hover:scale-105 transition-transform duration-300">
+        <div class="w-28 h-28 rounded-full p-1 bg-gradient-to-br from-[#60A5FA] to-[#2563EB] group-hover:scale-105 transition-transform duration-300">
           <span class="w-full h-full rounded-full bg-[#1E3650] ring-4 ring-[#13203F] text-white flex items-center justify-center"><span class="material-symbols-outlined text-[44px]">diversity_3</span></span>
         </div>
         <?php endif; ?>
         <p class="font-headline-sm text-headline-sm text-white font-bold pt-space-xs"><?php echo htmlspecialchars($it['nom']); ?></p>
-        <p class="font-label-lg text-label-lg text-[#FFE58A]"><?php echo htmlspecialchars($it['role']); ?></p>
+        <p class="font-label-lg text-label-lg text-[#93C5FD]"><?php echo htmlspecialchars($it['role']); ?></p>
         <span class="mt-space-2xs inline-flex items-center gap-1 px-space-sm py-1 rounded-full bg-white/10 font-label-md text-[11px] text-white/70"><?php echo htmlspecialchars($it['specialite']); ?></span>
       </div>
       <?php endforeach; ?>
@@ -373,11 +374,11 @@ main{overflow-x:hidden;}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
       <?php foreach ($temoignages as $i => $t): ?>
       <div class="reveal-scale group relative bg-white rounded-2xl p-space-xl pt-space-2xl shadow-[0_4px_20px_rgba(11,28,48,0.07)] hover:shadow-[0_16px_40px_rgba(11,28,48,0.16)] hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center gap-space-sm" style="transition-delay:<?php echo $i * 100; ?>ms">
-        <span class="absolute top-space-md left-space-md material-symbols-outlined text-[36px] text-[#EFF4FF] group-hover:text-[#FFF8D6] transition-colors duration-300">format_quote</span>
-        <div class="relative w-20 h-20 rounded-full p-1 bg-gradient-to-br from-[#2563EB] to-[#FFC700] group-hover:scale-110 transition-transform duration-300">
+        <span class="absolute top-space-md left-space-md material-symbols-outlined text-[36px] text-[#EFF4FF] group-hover:text-[#DBEAFE] transition-colors duration-300">format_quote</span>
+        <div class="relative w-20 h-20 rounded-full p-1 bg-gradient-to-br from-[#2563EB] to-[#60A5FA] group-hover:scale-110 transition-transform duration-300">
           <img src="<?php echo htmlspecialchars($t['photo']); ?>" alt="<?php echo htmlspecialchars($t['nom']); ?>" class="w-full h-full rounded-full object-cover ring-4 ring-white">
         </div>
-        <span class="text-[#FFC700] text-[16px] tracking-wide">★★★★★</span>
+        <span class="text-[#FACC15] text-[16px] tracking-wide">★★★★★</span>
         <p class="font-body-sm text-body-sm text-[#0B1C30] leading-relaxed">« <?php echo htmlspecialchars($t['texte']); ?> »</p>
         <div class="pt-space-xs border-t border-[#0B1C30]/8 w-full">
           <p class="font-label-lg text-label-lg text-[#0B1C30] font-bold leading-tight pt-space-sm"><?php echo htmlspecialchars($t['nom']); ?></p>
@@ -395,7 +396,7 @@ main{overflow-x:hidden;}
   <div class="max-w-max-width-content mx-auto px-gutter-mobile lg:px-gutter-desktop py-space-2xl relative z-10">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
       <div class="lg:col-span-7 reveal-left flex flex-col items-start">
-        <span class="font-label-md text-label-md text-[#FFE58A] uppercase tracking-wider font-bold">Contact & écoute confidentielle</span>
+        <span class="font-label-md text-label-md text-[#93C5FD] uppercase tracking-wider font-bold">Contact & écoute confidentielle</span>
         <h2 class="font-headline-xl-mobile text-headline-xl-mobile md:text-display-lg font-bold tracking-tight text-white mt-space-2xs">
           Parler de ce que vous vivez, c'est déjà reprendre la main.
         </h2>
@@ -412,16 +413,16 @@ main{overflow-x:hidden;}
           </a>
         </div>
         <div class="flex items-center gap-space-md mt-space-md text-white/80 font-body-sm text-body-sm">
-          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-[#FFE58A]">lock</span>Confidentialité absolue garantie</span>
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-[#93C5FD]">lock</span>Confidentialité absolue garantie</span>
           <span>•</span>
           <span>Paiement sécurisé · Carte bancaire, Mobile Money ou virement</span>
         </div>
       </div>
       <div class="lg:col-span-5 reveal-right flex justify-center lg:justify-end mt-space-lg lg:mt-0">
         <div class="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl bg-white/5 aspect-[4/5] flex flex-col items-center justify-center gap-space-md border border-white/10">
-          <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-[#FFC700]/15 blur-2xl"></div>
+          <div class="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-[#2563EB]/15 blur-2xl"></div>
           <div class="absolute -left-10 -bottom-10 w-40 h-40 rounded-full bg-[#2563EB]/30 blur-2xl"></div>
-          <span class="relative w-20 h-20 rounded-full bg-white/10 flex items-center justify-center"><span class="material-symbols-outlined text-[40px] text-[#FFE58A]">favorite</span></span>
+          <span class="relative w-20 h-20 rounded-full bg-white/10 flex items-center justify-center"><span class="material-symbols-outlined text-[40px] text-[#93C5FD]">favorite</span></span>
           <p class="relative font-title-md text-title-md font-bold text-white text-center px-space-lg">Pack Assistance RH — NexRaiz</p>
           <p class="relative font-body-sm text-body-sm text-white/70">Raiz People, Raiz Teams</p>
         </div>
