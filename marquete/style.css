@@ -42,16 +42,6 @@ button:focus-visible,a:focus-visible,summary:focus-visible {
     outline-offset: 5px
 }
 
-header {
-    height: 104px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 6%;
-    border-bottom: 1px solid #d7e1ec;
-    gap: 25px
-}
-
 .brand {
     font-size: 33px;
     letter-spacing: -1.5px;
@@ -71,15 +61,6 @@ header {
     font-weight: 500
 }
 
-nav {
-    display: flex;
-    gap: 30px;
-    font-size: 14px
-}
-
-nav a:hover {
-    color: #102B50
-}
 
 .btn {
     display: inline-flex;
@@ -634,18 +615,6 @@ dialog li {
 }
 
 @media(max-width: 1000px) {
-    nav {
-        gap:15px
-    }
-
-    header {
-        padding: 0 4%
-    }
-
-    nav a {
-        font-size: 12px
-    }
-
     .hero {
         padding-left: 4%;
         padding-right: 4%
@@ -685,16 +654,8 @@ dialog li {
 }
 
 @media(max-width: 650px) {
-    header {
-        height:82px
-    }
-
     .brand {
         font-size: 28px
-    }
-
-    nav {
-        display: none
     }
 
     .btn.small {
