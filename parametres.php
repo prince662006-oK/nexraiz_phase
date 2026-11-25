@@ -1,8 +1,11 @@
 <?php
 require __DIR__ . '/includes/bootstrap.php';
 require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/google-oauth.php';
 
 $user = require_login('mon-espace.php');
+$compteGoogle = google_compte_pour_utilisateur((int) $user['id']);
+$googleStatut = $_GET['google'] ?? '';
 
 $stmt = db()->prepare('SELECT id, role, nom, prenom, email, telephone FROM users WHERE id = ?');
 $stmt->execute([$user['id']]);
@@ -61,6 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([password_hash($nouveauMotDePasse, PASSWORD_DEFAULT), $user['id']]);
             $succesMotDePasse = 'Votre mot de passe a été modifié.';
         }
+    } elseif ($action === 'google_deconnecter') {
+        google_compte_deconnecter((int) $user['id']);
+        header('Location: parametres.php?google=deconnecte');
+        exit;
     }
 }
 
@@ -170,6 +177,53 @@ render_top_header();
           <span>Changer le mot de passe</span>
         </button>
       </form>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-sm">
+      <div class="flex items-center gap-space-xs">
+        <span class="w-9 h-9 rounded-full bg-primary-container/10 text-primary flex items-center justify-center"><span class="material-symbols-outlined text-[20px]">mail</span></span>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Compte Google</h2>
+      </div>
+
+      <?php if ($googleStatut === 'connecte'): ?>
+      <div class="flex items-start gap-space-xs bg-green-50 rounded-xl p-space-sm">
+        <span class="material-symbols-outlined text-[18px] text-green-700 mt-0.5">check_circle</span>
+        <p class="font-body-sm text-body-sm text-on-surface">Compte Google connecté avec succès.</p>
+      </div>
+      <?php elseif ($googleStatut === 'deconnecte'): ?>
+      <div class="flex items-start gap-space-xs bg-surface-container-low rounded-xl p-space-sm">
+        <span class="material-symbols-outlined text-[18px] text-secondary mt-0.5">info</span>
+        <p class="font-body-sm text-body-sm text-on-surface">Compte Google déconnecté.</p>
+      </div>
+      <?php elseif ($googleStatut === 'refuse'): ?>
+      <div class="flex items-start gap-space-xs bg-error-container/40 rounded-xl p-space-sm">
+        <span class="material-symbols-outlined text-[18px] text-error mt-0.5">error</span>
+        <p class="font-body-sm text-body-sm text-on-surface">Connexion annulée ou refusée par Google.</p>
+      </div>
+      <?php elseif ($googleStatut === 'erreur' || $googleStatut === 'indisponible'): ?>
+      <div class="flex items-start gap-space-xs bg-error-container/40 rounded-xl p-space-sm">
+        <span class="material-symbols-outlined text-[18px] text-error mt-0.5">error</span>
+        <p class="font-body-sm text-body-sm text-on-surface">La connexion à Google a échoué. Réessayez dans un instant ou contactez votre consultant.</p>
+      </div>
+      <?php endif; ?>
+
+      <?php if ($compteGoogle): ?>
+      <p class="font-body-sm text-body-sm text-secondary">Vos candidatures envoyées via NexRaiz partent désormais directement depuis <strong class="text-on-surface"><?php echo htmlspecialchars($compteGoogle['google_email']); ?></strong> — le recruteur voit votre vraie adresse.</p>
+      <form method="post" class="self-start">
+        <?php echo csrf_field(); ?>
+        <input type="hidden" name="action" value="google_deconnecter">
+        <button type="submit" class="h-11 px-space-lg rounded-xl border border-outline-variant text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-space-2xs hover:bg-surface-container-low transition-colors">
+          <span class="material-symbols-outlined text-[18px]">link_off</span>
+          <span>Déconnecter mon compte Google</span>
+        </button>
+      </form>
+      <?php else: ?>
+      <p class="font-body-sm text-body-sm text-secondary">Connectez votre compte Google pour que vos candidatures « Postuler via NexRaiz » partent depuis votre propre Gmail plutôt que depuis l'adresse de NexRaiz. Facultatif, et réversible à tout moment.</p>
+      <a href="google-oauth-start.php" class="self-start h-11 px-space-lg rounded-xl bg-primary-container text-white font-label-lg text-label-lg flex items-center justify-center gap-space-2xs shadow-sm hover:bg-primary transition-colors">
+        <span class="material-symbols-outlined text-[18px]">add_link</span>
+        <span>Connecter mon compte Google</span>
+      </a>
+      <?php endif; ?>
     </div>
 
     <div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex items-center justify-between gap-space-md flex-wrap">

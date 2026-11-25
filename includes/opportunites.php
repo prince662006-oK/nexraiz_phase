@@ -12,6 +12,7 @@ require_once __DIR__ . '/extraction.php';
 require_once __DIR__ . '/opportunites-ia.php';
 require_once __DIR__ . '/notifications.php';
 require_once __DIR__ . '/mailer.php';
+require_once __DIR__ . '/google-oauth.php';
 
 function opportunites_config(): array
 {
@@ -547,19 +548,44 @@ function opportunites_candidater_via_nexraiz(int $opportuniteId, int $dossierId,
 
     $nomClient = trim(($client['prenom'] ?? '') . ' ' . ($client['nom'] ?? ''));
     $sujet = 'Candidature — ' . $offre['titre'] . ($nomClient !== '' ? ' — ' . $nomClient : '');
-    $corps = $texteLettre . "\n\n—\nCandidature transmise via NexRaiz pour le compte de {$nomClient}."
+    $corpsTexte = $texteLettre . "\n\n—\nCandidature transmise via NexRaiz pour le compte de {$nomClient}."
         . (!empty($client['email']) ? " Répondre directement à {$client['email']}." : '');
 
-    $resultat = nx_envoyer_candidature(
-        $offre['email_candidature'],
-        $sujet,
-        $corps,
-        [['chemin' => $cv['chemin'], 'nom' => $cv['nom']]],
-        $client['email'] ?? '',
-        $nomClient
-    );
+    // Jeton de suivi de lecture : généré avant l'envoi, mais la ligne n'est
+    // insérée qu'après un envoi réussi (jamais de ligne orpheline pour une
+    // candidature qui n'est en réalité jamais partie).
+    $tokenSuivi = bin2hex(random_bytes(20));
+    $pixel = '<img src="' . htmlspecialchars(nx_base_url() . '/email-pixel.php?t=' . $tokenSuivi) . '" width="1" height="1" style="display:none" alt="">';
+    $corpsHtml = nl2br(htmlspecialchars($corpsTexte)) . $pixel;
+
+    $pieces = [['chemin' => $cv['chemin'], 'nom' => $cv['nom']]];
+
+    // Si le candidat a connecté son compte Google, on envoie réellement
+    // depuis son propre Gmail (le From *est* alors son adresse réelle, pas
+    // besoin de Reply-To) ; sinon, ou si cet envoi échoue malgré le
+    // rafraîchissement du jeton (accès révoqué côté Google), repli sur
+    // l'envoi NexRaiz habituel, strictement inchangé.
+    $resultat = null;
+    $accessToken = google_access_token_valide((int) $client['id']);
+    if ($accessToken !== null) {
+        $compteGoogle = google_compte_pour_utilisateur((int) $client['id']);
+        $resultat = nx_envoyer_candidature_gmail($accessToken, $compteGoogle['google_email'], $offre['email_candidature'], $sujet, $corpsHtml, $pieces);
+    }
+    if ($resultat === null || !$resultat['ok']) {
+        $resultat = nx_envoyer_candidature(
+            $offre['email_candidature'],
+            $sujet,
+            $corpsHtml,
+            $pieces,
+            $client['email'] ?? '',
+            $nomClient
+        );
+    }
 
     if ($resultat['ok']) {
+        $stmt = db()->prepare('INSERT INTO opportunites_candidatures_suivi (opportunite_id, dossier_id, token) VALUES (?, ?, ?)');
+        $stmt->execute([$opportuniteId, $dossierId, $tokenSuivi]);
+
         opportunites_mettre_a_jour_statut($opportuniteId, $dossierId, 'postule', date('Y-m-d'), 'Candidature envoyée via NexRaiz le ' . date('d/m/Y à H:i') . '.');
         log_activite($dossierId, 'Candidature envoyée via NexRaiz : ' . $offre['titre']);
     }

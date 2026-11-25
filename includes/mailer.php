@@ -49,10 +49,14 @@ function nx_send_mail(string $to, string $sujet, string $corpsHtml): bool
  * recruteur et risquerait de faire atterrir le message en spam, voire de
  * le faire rejeter.
  *
+ * Le corps est du HTML (depuis includes/opportunites.php : texte de la
+ * lettre + pixel de suivi de lecture invisible) ; AltBody est généré ici en
+ * texte brut pour les clients mail qui n'affichent pas le HTML.
+ *
  * @param array<int,array{chemin:string,nom:string}> $piecesJointes
  * @return array{ok:bool,erreur:string}
  */
-function nx_envoyer_candidature(string $destinataire, string $sujet, string $corpsTexte, array $piecesJointes, string $replyToEmail, string $replyToNom): array
+function nx_envoyer_candidature(string $destinataire, string $sujet, string $corpsHtml, array $piecesJointes, string $replyToEmail, string $replyToNom): array
 {
     $mail = new PHPMailer(true);
     try {
@@ -70,13 +74,88 @@ function nx_envoyer_candidature(string $destinataire, string $sujet, string $cor
             $mail->addAttachment($piece['chemin'], $piece['nom']);
         }
         $mail->Subject = $sujet;
-        $mail->Body = $corpsTexte;
-        $mail->isHTML(false);
+        $mail->isHTML(true);
+        $mail->Body = $corpsHtml;
+        $mail->AltBody = strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $corpsHtml));
         $mail->send();
         return ['ok' => true, 'erreur' => ''];
     } catch (PHPMailerException $e) {
         $erreur = $mail->ErrorInfo ?: $e->getMessage();
         error_log('[NexRaiz mail] Échec envoi candidature à ' . $destinataire . ' — ' . $erreur);
+        return ['ok' => false, 'erreur' => $erreur];
+    }
+}
+
+/**
+ * Variante de nx_envoyer_candidature() qui envoie réellement depuis le
+ * Gmail du candidat (via l'API Gmail, jeton OAuth) plutôt que depuis
+ * l'adresse technique de NexRaiz. Pas de Reply-To nécessaire : le From
+ * *est* déjà l'adresse réelle du candidat, le recruteur lui répond
+ * naturellement.
+ *
+ * Construit le message avec PHPMailer (preSend() + getSentMIMEMessage())
+ * plutôt qu'à la main : même raisonnement que nx_envoyer_candidature(),
+ * construire un MIME multipart avec pièces jointes à la main est fragile
+ * (encodage base64, limites de ligne, injection d'en-tête). preSend()
+ * construit le message en mémoire sans jamais appeler de transport
+ * (isMail/isSMTP/isSendmail ne sont pas utilisés ici) — rien n'est envoyé
+ * par PHPMailer lui-même, seul le texte MIME assemblé est récupéré.
+ *
+ * @param array<int,array{chemin:string,nom:string}> $piecesJointes
+ * @return array{ok:bool,erreur:string}
+ */
+function nx_envoyer_candidature_gmail(string $accessToken, string $fromEmail, string $destinataire, string $sujet, string $corpsHtml, array $piecesJointes): array
+{
+    $mail = new PHPMailer(true);
+    try {
+        $mail->CharSet = 'UTF-8';
+        $mail->setFrom($fromEmail, $fromEmail);
+        $mail->addAddress($destinataire);
+        foreach ($piecesJointes as $piece) {
+            if (!is_file($piece['chemin'])) {
+                continue;
+            }
+            $mail->addAttachment($piece['chemin'], $piece['nom']);
+        }
+        $mail->Subject = $sujet;
+        $mail->isHTML(true);
+        $mail->Body = $corpsHtml;
+        $mail->AltBody = strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $corpsHtml));
+
+        if (!$mail->preSend()) {
+            return ['ok' => false, 'erreur' => $mail->ErrorInfo ?: 'Échec de construction du message.'];
+        }
+        $brut = $mail->getSentMIMEMessage();
+        $rawBase64Url = rtrim(strtr(base64_encode($brut), '+/', '-_'), '=');
+
+        $ch = curl_init('https://gmail.googleapis.com/gmail/v1/users/me/messages/send');
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST           => true,
+            CURLOPT_HTTPHEADER     => [
+                'Authorization: Bearer ' . $accessToken,
+                'Content-Type: application/json',
+            ],
+            CURLOPT_POSTFIELDS => json_encode(['raw' => $rawBase64Url]),
+            CURLOPT_TIMEOUT    => 25,
+        ]);
+        $reponseBrute = curl_exec($ch);
+        $erreurCurl = curl_error($ch);
+        $codeHttp = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($reponseBrute === false) {
+            return ['ok' => false, 'erreur' => 'Connexion à Gmail impossible : ' . $erreurCurl];
+        }
+        if ($codeHttp >= 400) {
+            $donnees = json_decode($reponseBrute, true);
+            $erreur = $donnees['error']['message'] ?? ('Erreur Gmail HTTP ' . $codeHttp);
+            return ['ok' => false, 'erreur' => $erreur];
+        }
+        return ['ok' => true, 'erreur' => ''];
+    } catch (\Throwable $e) {
+        $erreur = $mail->ErrorInfo ?: $e->getMessage();
+        error_log('[NexRaiz mail-gmail] Échec envoi candidature à ' . $destinataire . ' depuis ' . $fromEmail . ' — ' . $erreur);
         return ['ok' => false, 'erreur' => $erreur];
     }
 }
