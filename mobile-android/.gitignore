@@ -1,0 +1,3 @@
+# Dépendances npm (réinstallables via `npm install`), même logique que
+# /vendor/ pour la partie PHP à la racine du projet.
+node_modules/

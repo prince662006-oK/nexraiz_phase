@@ -38,19 +38,23 @@ ON DUPLICATE KEY UPDATE nom = VALUES(nom);
 
 -- ALTER ... ADD CONSTRAINT n'a pas d'équivalent "IF NOT EXISTS" portable ; ce script
 -- doit pouvoir être rejoué sans erreur sur une base déjà initialisée (migrations
--- incrémentales), donc on vérifie l'existence de la contrainte avant de l'ajouter.
-SET @fk_users_pack_existe = (
-    SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
-    WHERE CONSTRAINT_SCHEMA = DATABASE() AND CONSTRAINT_NAME = 'fk_users_pack'
-);
-SET @sql_fk_users_pack = IF(
-    @fk_users_pack_existe = 0,
-    'ALTER TABLE users ADD CONSTRAINT fk_users_pack FOREIGN KEY (pack_id) REFERENCES packs(id) ON DELETE SET NULL',
-    'SELECT 1'
-);
-PREPARE stmt_fk_users_pack FROM @sql_fk_users_pack;
-EXECUTE stmt_fk_users_pack;
-DEALLOCATE PREPARE stmt_fk_users_pack;
+-- incrémentales). Vérifier via information_schema.TABLE_CONSTRAINTS (ancienne
+-- approche) fait planter MariaDB 10.4.32 sur certaines installations (crash
+-- reproductible dans fill_schema_proc/get_schema_tables_result dès que cette
+-- requête est combinée à un SET @var = (sous-requête) — observé en
+-- développement local, voir mysql_error.log). On évite complètement
+-- information_schema : la procédure tente l'ALTER et avale silencieusement
+-- l'erreur 1826 (ER_FK_DUP_NAME, contrainte déjà existante).
+DROP PROCEDURE IF EXISTS nx_migration_fk_users_pack;
+DELIMITER $$
+CREATE PROCEDURE nx_migration_fk_users_pack()
+BEGIN
+    DECLARE CONTINUE HANDLER FOR 1005, 1826 BEGIN END;
+    ALTER TABLE users ADD CONSTRAINT fk_users_pack FOREIGN KEY (pack_id) REFERENCES packs(id) ON DELETE SET NULL;
+END$$
+DELIMITER ;
+CALL nx_migration_fk_users_pack();
+DROP PROCEDURE nx_migration_fk_users_pack;
 
 -- Un dossier = une instance de parcours pour un client sur un pack donné
 CREATE TABLE IF NOT EXISTS dossiers (
@@ -689,19 +693,19 @@ CREATE TABLE IF NOT EXISTS classic_analyses_ia_opportunites (
 -- de la lettre de motivation réelle du client (pas seulement le CV) et se
 -- recalcule si elle change — colonne ajoutée via ALTER (pas dans le CREATE
 -- TABLE ci-dessus) pour rester rejouable sans erreur sur une base déjà
--- initialisée, même principe que fk_users_pack plus haut.
-SET @lettre_hash_existe = (
-    SELECT COUNT(*) FROM information_schema.COLUMNS
-    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'classic_analyses_ia_opportunites' AND COLUMN_NAME = 'lettre_hash'
-);
-SET @sql_lettre_hash = IF(
-    @lettre_hash_existe = 0,
-    'ALTER TABLE classic_analyses_ia_opportunites ADD COLUMN lettre_hash VARCHAR(64) NULL COMMENT ''sha256 du texte de la lettre de motivation utilisée, NULL si aucune'' AFTER cv_hash',
-    'SELECT 1'
-);
-PREPARE stmt_lettre_hash FROM @sql_lettre_hash;
-EXECUTE stmt_lettre_hash;
-DEALLOCATE PREPARE stmt_lettre_hash;
+-- initialisée. Même principe que fk_users_pack plus haut : on évite
+-- information_schema (crash MariaDB reproductible) et on avale l'erreur
+-- 1060 (ER_DUP_FIELDNAME, colonne déjà existante) via une procédure jetable.
+DROP PROCEDURE IF EXISTS nx_migration_lettre_hash;
+DELIMITER $$
+CREATE PROCEDURE nx_migration_lettre_hash()
+BEGIN
+    DECLARE CONTINUE HANDLER FOR 1060 BEGIN END;
+    ALTER TABLE classic_analyses_ia_opportunites ADD COLUMN lettre_hash VARCHAR(64) NULL COMMENT 'sha256 du texte de la lettre de motivation utilisée, NULL si aucune' AFTER cv_hash;
+END$$
+DELIMITER ;
+CALL nx_migration_lettre_hash();
+DROP PROCEDURE nx_migration_lettre_hash;
 
 -- Offres d'emploi/stage/alternance/mission. source/recruiter_id préparent le
 -- futur portail recruteur (non construit ici) sans qu'aucune UI recruteur
@@ -772,6 +776,63 @@ CREATE TABLE IF NOT EXISTS opportunites_notifications_envoyees (
     UNIQUE KEY uniq_notif_offre_dossier_type (opportunite_id, dossier_id, type),
     FOREIGN KEY (opportunite_id) REFERENCES opportunites(id) ON DELETE CASCADE,
     FOREIGN KEY (dossier_id) REFERENCES dossiers(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Suivi de lecture (pixel invisible) des emails de candidature envoyés via
+-- « Postuler via NexRaiz ». `vu_at` reste NULL tant que le pixel n'a jamais
+-- été chargé — indicatif seulement (beaucoup de clients mail bloquent les
+-- images par défaut), jamais présenté comme une preuve de non-lecture.
+CREATE TABLE IF NOT EXISTS opportunites_candidatures_suivi (
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    opportunite_id  INT NOT NULL,
+    dossier_id      INT NOT NULL,
+    token           VARCHAR(64) NOT NULL,
+    envoye_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    vu_at           DATETIME NULL,
+    UNIQUE KEY uniq_suivi_token (token),
+    FOREIGN KEY (opportunite_id) REFERENCES opportunites(id) ON DELETE CASCADE,
+    FOREIGN KEY (dossier_id) REFERENCES dossiers(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Jetons des appareils/navigateurs abonnés aux notifications push (web et
+-- app Android). Un jeton est unique tous utilisateurs confondus : s'il
+-- change de propriétaire (déconnexion/reconnexion sur un appareil partagé),
+-- l'upsert applicatif le réattribue plutôt que d'en garder deux lignes.
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+    id          INT AUTO_INCREMENT PRIMARY KEY,
+    user_id     INT NOT NULL,
+    token       VARCHAR(255) NOT NULL,
+    platform    ENUM('web','android') NOT NULL,
+    created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_push_token (token),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_push_user (user_id)
+) ENGINE=InnoDB;
+
+-- Cache du jeton d'accès Google (compte de service Firebase) pour l'envoi
+-- de notifications push — une seule ligne, réécrite à chaque renouvellement,
+-- pour éviter de re-signer un JWT à chaque notification envoyée.
+CREATE TABLE IF NOT EXISTS fcm_token_cache (
+    id            INT AUTO_INCREMENT PRIMARY KEY,
+    access_token  TEXT NOT NULL,
+    expires_at    DATETIME NOT NULL
+) ENGINE=InnoDB;
+
+-- Comptes Google connectés par les utilisateurs (candidats) pour envoyer
+-- leurs candidatures depuis leur propre Gmail plutôt que depuis l'adresse
+-- technique de NexRaiz. Un seul compte par utilisateur ; se reconnecter
+-- écrase la ligne existante.
+CREATE TABLE IF NOT EXISTS google_comptes (
+    id             INT AUTO_INCREMENT PRIMARY KEY,
+    user_id        INT NOT NULL,
+    google_email   VARCHAR(190) NOT NULL,
+    access_token   TEXT NOT NULL,
+    refresh_token  TEXT NOT NULL,
+    expires_at     DATETIME NOT NULL,
+    created_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_google_comptes_user (user_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Les 5 offres [DÉMO] fictives qui occupaient auparavant cet espace ont été

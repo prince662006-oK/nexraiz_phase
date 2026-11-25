@@ -1,0 +1,20 @@
+{
+  "appId": "com.nexraiz.app",
+  "appName": "NexRaiz",
+  "webDir": "www",
+  "server": {
+    "url": "https://nexraiz.com/2/",
+    "cleartext": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "launchAutoHide": true,
+      "backgroundColor": "#0A46DC",
+      "showSpinner": true,
+      "spinnerColor": "#FFFFFF",
+      "splashFullScreen": true,
+      "splashImmersive": true
+    }
+  }
+}

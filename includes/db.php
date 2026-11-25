@@ -7,6 +7,15 @@ function db(): PDO
 {
     static $pdo = null;
     if ($pdo === null) {
+        // Comme ai-config.php/opportunites-config.php/payment-config.php :
+        // charge les vraies valeurs si le fichier existe. Nécessaire ici
+        // aussi, sinon une page qui ne passe par aucun de ces 3 fichiers
+        // (ex. la connexion) peut appeler db() avant que putenv() ait
+        // tourné sur ce processus PHP-FPM, et retomber sur un identifiant
+        // obsolète déjà fixé par une requête précédente du même worker.
+        if (is_file(__DIR__ . '/env.local.php')) {
+            require_once __DIR__ . '/env.local.php';
+        }
         $host = getenv('NEXRAIZ_DB_HOST') ?: '127.0.0.1';
         $name = getenv('NEXRAIZ_DB_NAME') ?: 'nexraiz';
         $user = getenv('NEXRAIZ_DB_USER') ?: 'root';
@@ -46,4 +55,26 @@ function nx_racine_stockage_prive(): string
         return rtrim($override, '/\\');
     }
     return dirname(__DIR__, 3);
+}
+
+/**
+ * URL de base de l'application (sans slash final), pour construire des URLs
+ * absolues dans des contextes qui n'ont pas de requête HTTP en cours (email
+ * envoyé par un cron, pixel de suivi, redirection OAuth). Priorité à
+ * NEXRAIZ_APP_URL (includes/env.local.php) ; à défaut, reconstruite depuis
+ * la requête courante — ne fonctionne alors que dans un contexte web.
+ */
+function nx_base_url(): string
+{
+    $override = getenv('NEXRAIZ_APP_URL');
+    if ($override) {
+        return rtrim($override, '/');
+    }
+    if (empty($_SERVER['HTTP_HOST'])) {
+        error_log('[NexRaiz] nx_base_url() appelée hors contexte web sans NEXRAIZ_APP_URL défini.');
+        return '';
+    }
+    $schema = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $dossier = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+    return $schema . '://' . $_SERVER['HTTP_HOST'] . $dossier;
 }

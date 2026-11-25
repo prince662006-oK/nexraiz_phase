@@ -107,11 +107,88 @@ function render_head(string $title, string $description = "Le Pack Assistance Ne
 @keyframes stepper-bird-fly{0%,100%{transform:translate(-50%,0) rotate(-8deg);}50%{transform:translate(-50%,-7px) rotate(8deg);}}
 .stepper-bird{animation:stepper-bird-fly 1.6s ease-in-out infinite;display:inline-block;}
 @media(prefers-reduced-motion:reduce){.stepper-bird{animation:none;}}
+.nx-mobile-nav-open{display:flex!important;position:fixed;top:64px;left:0;right:0;flex-direction:column;background:#fff;padding:.5rem;box-shadow:0 10px 25px rgba(11,25,44,.15);border-bottom:1px solid rgba(0,0,0,.08);z-index:40;gap:.25rem;max-height:calc(100vh - 64px);overflow-y:auto;}
+.nx-mobile-nav-open a{width:100%;}
+.nx-sidebar-open{display:flex!important;position:fixed!important;top:0;left:0;bottom:0;z-index:60;box-shadow:0 0 30px rgba(0,0,0,.3);overflow-y:auto;}
+.nx-sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(11,25,44,.5);z-index:59;}
+.nx-sidebar-backdrop-visible{display:block;}
 </style>
 <script src="https://cdn.tailwindcss.com"></script>
 <script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "primary-container": "#14304f", "background": "#faf8ff", "outline": "#737686", "inverse-on-surface": "#eef0ff", "on-secondary": "#ffffff", "on-primary-fixed": "#00174b", "surface-container-high": "#e2e7ff", "on-error": "#ffffff", "on-tertiary-container": "#ffede1", "on-secondary-container": "#58657b", "surface-container-low": "#f2f3ff", "inverse-primary": "#b4c5ff", "secondary-fixed": "#d6e3fe", "on-secondary-fixed-variant": "#3a475c", "on-tertiary-fixed-variant": "#6e3900", "tertiary-fixed-dim": "#ffb77d", "on-primary-container": "#eeefff", "error-container": "#ffdad6", "on-primary": "#ffffff", "on-secondary-fixed": "#0e1c2f", "surface-tint": "#1E3E62", "secondary-fixed-dim": "#bac7e1", "tertiary-container": "#a65900", "tertiary-fixed": "#ffdcc3", "on-background": "#131b2e", "on-tertiary": "#ffffff", "surface-bright": "#faf8ff", "on-error-container": "#93000a", "surface-container": "#eaedff", "primary-fixed-dim": "#b4c5ff", "outline-variant": "#c3c6d7", "primary": "#1E3E62", "surface-container-highest": "#dae2fd", "surface-dim": "#d2d9f4", "tertiary": "#824500", "error": "#ba1a1a", "on-primary-fixed-variant": "#003ea8", "surface-variant": "#dae2fd", "surface-container-lowest": "#ffffff", "surface": "#faf8ff", "secondary": "#525f75", "on-tertiary-fixed": "#2f1500", "primary-fixed": "#dbe1ff", "secondary-container": "#d6e3fe", "on-surface-variant": "#434655", "on-surface": "#131b2e", "inverse-surface": "#0B192C" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-2xs": "0.25rem", "space-3xl": "4.5rem", "max-width-content": "80rem", "space-sm": "0.75rem", "space-xl": "2rem", "gutter-mobile": "1rem", "space-xs": "0.5rem", "space-4xl": "6rem", "space-2xl": "3rem", "space-md": "1rem", "max-width-reading": "45rem", "gutter-desktop": "1.5rem", "space-lg": "1.5rem" }, "fontFamily": { "headline-xl": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "headline-xl-mobile": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-badge": ["Plus Jakarta Sans"] }, "fontSize": { "headline-xl": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["1.375rem", { "lineHeight": "1.875rem", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.015em", "fontWeight": "600" }], "headline-sm": ["1.125rem", { "lineHeight": "1.625rem", "letterSpacing": "-0.005em", "fontWeight": "600" }], "label-lg": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-md": ["1rem", { "lineHeight": "1.5rem", "letterSpacing": "0em", "fontWeight": "400" }], "label-md": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.02em", "fontWeight": "600" }], "body-sm": ["0.875rem", { "lineHeight": "1.375rem", "letterSpacing": "0.005em", "fontWeight": "400" }], "headline-xl-mobile": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.015em", "fontWeight": "700" }], "display-lg-mobile": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.025em", "fontWeight": "800" }], "body-lg": ["1.125rem", { "lineHeight": "1.75rem", "letterSpacing": "0em", "fontWeight": "400" }], "display-lg": ["3.5rem", { "lineHeight": "4rem", "letterSpacing": "-0.03em", "fontWeight": "800" }], "label-badge": ["0.6875rem", { "lineHeight": "0.875rem", "letterSpacing": "0.04em", "fontWeight": "700" }] } } } }</script>
 </head>
 <body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen">
+<script>
+// Ajoute un bouton burger aux en-têtes d'espace (consultant/admin/client) dont
+// la nav d'onglets est "hidden md:flex" sans aucun équivalent mobile — ces
+// pages ont chacune leur propre en-tête HTML (pas render_top_header(), qui a
+// déjà son propre menu mobile #mobileMenuToggle), donc on le fait une seule
+// fois ici plutôt que de dupliquer la même logique dans ~20 fichiers.
+document.addEventListener('DOMContentLoaded', function() {
+  if (document.getElementById('mobileMenuToggle')) return;
+  var header = document.querySelector('header');
+  if (!header) return;
+
+  var nav = header.querySelector('nav.hidden');
+  if (nav) {
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.setAttribute('aria-label', 'Ouvrir le menu');
+  btn.setAttribute('aria-expanded', 'false');
+  btn.className = 'md:hidden w-10 h-10 flex items-center justify-center text-on-surface hover:text-primary transition-colors shrink-0';
+  btn.innerHTML = '<span class="material-symbols-outlined text-[24px]">menu</span>';
+  nav.parentElement.insertBefore(btn, nav.nextSibling);
+
+  function fermer() {
+    nav.classList.remove('nx-mobile-nav-open');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.querySelector('span').textContent = 'menu';
+  }
+  btn.addEventListener('click', function() {
+    var ouvert = nav.classList.toggle('nx-mobile-nav-open');
+    btn.setAttribute('aria-expanded', ouvert ? 'true' : 'false');
+    btn.querySelector('span').textContent = ouvert ? 'close' : 'menu';
+  });
+  nav.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', fermer); });
+  document.addEventListener('click', function(e) {
+    if (nav.classList.contains('nx-mobile-nav-open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+      fermer();
+    }
+  });
+  }
+
+  // Tableaux de bord client (Classic/Assistance/Booster/Wellbeing) : la
+  // navigation vit dans une sidebar "hidden lg:flex" plutôt qu'un nav
+  // d'en-tête — même principe, bouton burger + tiroir recouvrant au toucher.
+  var aside = document.querySelector('aside.hidden');
+  if (aside) {
+    var headerRow = header.querySelector('div') || header;
+    var asideBtn = document.createElement('button');
+    asideBtn.type = 'button';
+    asideBtn.setAttribute('aria-label', 'Ouvrir le menu');
+    asideBtn.setAttribute('aria-expanded', 'false');
+    asideBtn.className = 'lg:hidden w-10 h-10 flex items-center justify-center text-on-surface hover:text-primary transition-colors shrink-0';
+    asideBtn.innerHTML = '<span class="material-symbols-outlined text-[24px]">menu</span>';
+    headerRow.insertBefore(asideBtn, headerRow.firstChild);
+
+    var backdrop = document.createElement('div');
+    backdrop.className = 'nx-sidebar-backdrop';
+    document.body.appendChild(backdrop);
+
+    function fermerAside() {
+      aside.classList.remove('nx-sidebar-open');
+      backdrop.classList.remove('nx-sidebar-backdrop-visible');
+      asideBtn.setAttribute('aria-expanded', 'false');
+    }
+    asideBtn.addEventListener('click', function() {
+      var ouvert = aside.classList.toggle('nx-sidebar-open');
+      backdrop.classList.toggle('nx-sidebar-backdrop-visible', ouvert);
+      asideBtn.setAttribute('aria-expanded', ouvert ? 'true' : 'false');
+    });
+    backdrop.addEventListener('click', fermerAside);
+    aside.querySelectorAll('a').forEach(function(a) { a.addEventListener('click', fermerAside); });
+  }
+});
+</script>
 <?php
 }
 
@@ -474,7 +551,16 @@ function render_chatbot_widget(): void
 
   function toggle(ouvrir) {
     panel.classList.toggle('is-open', ouvrir);
-    if (ouvrir) { input.focus(); messages.scrollTop = messages.scrollHeight; }
+    if (ouvrir) {
+      messages.scrollTop = messages.scrollHeight;
+      // Le focus programmatique ouvre aussitôt le clavier virtuel sur
+      // mobile, ce qui décale brutalement la mise en page (le panneau est
+      // en position fixed près du bas de l'écran) : on ne force le focus
+      // qu'avec un pointeur fin (souris/trackpad), jamais au toucher.
+      if (window.matchMedia('(pointer: fine)').matches) {
+        input.focus();
+      }
+    }
   }
   launcher.addEventListener('click', function() { toggle(!panel.classList.contains('is-open')); });
   closeBtn.addEventListener('click', function() { toggle(false); });
