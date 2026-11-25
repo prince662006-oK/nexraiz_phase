@@ -12,11 +12,17 @@ $nbNotifAccueil = $utilisateurAccueil ? notifications_non_lues((int) $utilisateu
         <meta name="description" content="Emploi, évolution, difficultés au travail, équilibre : découvrez les accompagnements NexRaiz pour votre vie professionnelle.">
         <link rel="icon" href="uploads/LOGO0.png" type="image/png">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+        <?php if ($utilisateurAccueil): ?>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script id="tailwind-config">tailwind.config = { corePlugins: { preflight: false }, darkMode: "class", theme: { extend: { "colors": { "primary-container": "#14304f", "background": "#faf8ff", "outline": "#737686", "inverse-on-surface": "#eef0ff", "on-secondary": "#ffffff", "on-primary-fixed": "#00174b", "surface-container-high": "#e2e7ff", "on-error": "#ffffff", "on-tertiary-container": "#ffede1", "on-secondary-container": "#58657b", "surface-container-low": "#f2f3ff", "inverse-primary": "#b4c5ff", "secondary-fixed": "#d6e3fe", "on-secondary-fixed-variant": "#3a475c", "on-tertiary-fixed-variant": "#6e3900", "tertiary-fixed-dim": "#ffb77d", "on-primary-container": "#eeefff", "error-container": "#ffdad6", "on-primary": "#ffffff", "on-secondary-fixed": "#0e1c2f", "surface-tint": "#1E3E62", "secondary-fixed-dim": "#bac7e1", "tertiary-container": "#a65900", "tertiary-fixed": "#ffdcc3", "on-background": "#131b2e", "on-tertiary": "#ffffff", "surface-bright": "#faf8ff", "on-error-container": "#93000a", "surface-container": "#eaedff", "primary-fixed-dim": "#b4c5ff", "outline-variant": "#c3c6d7", "primary": "#1E3E62", "surface-container-highest": "#dae2fd", "surface-dim": "#d2d9f4", "tertiary": "#824500", "error": "#ba1a1a", "on-primary-fixed-variant": "#003ea8", "surface-variant": "#dae2fd", "surface-container-lowest": "#ffffff", "surface": "#faf8ff", "secondary": "#525f75", "on-tertiary-fixed": "#2f1500", "primary-fixed": "#dbe1ff", "secondary-container": "#d6e3fe", "on-surface-variant": "#434655", "on-surface": "#131b2e", "inverse-surface": "#0B192C" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-2xs": "0.25rem", "space-3xl": "4.5rem", "max-width-content": "80rem", "space-sm": "0.75rem", "space-xl": "2rem", "gutter-mobile": "1rem", "space-xs": "0.5rem", "space-4xl": "6rem", "space-2xl": "3rem", "space-md": "1rem", "max-width-reading": "45rem", "gutter-desktop": "1.5rem", "space-lg": "1.5rem" }, "fontFamily": { "headline-xl": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "headline-xl-mobile": ["Plus Jakarta Sans"], "display-lg-mobile": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"], "label-badge": ["Plus Jakarta Sans"] }, "fontSize": { "headline-xl": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.02em", "fontWeight": "700" }], "headline-md": ["1.375rem", { "lineHeight": "1.875rem", "letterSpacing": "-0.01em", "fontWeight": "600" }], "headline-lg": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.015em", "fontWeight": "600" }], "headline-sm": ["1.125rem", { "lineHeight": "1.625rem", "letterSpacing": "-0.005em", "fontWeight": "600" }], "label-lg": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "600" }], "body-md": ["1rem", { "lineHeight": "1.5rem", "letterSpacing": "0em", "fontWeight": "400" }], "label-md": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.02em", "fontWeight": "600" }], "body-sm": ["0.875rem", { "lineHeight": "1.375rem", "letterSpacing": "0.005em", "fontWeight": "400" }], "headline-xl-mobile": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.015em", "fontWeight": "700" }], "display-lg-mobile": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.025em", "fontWeight": "800" }], "body-lg": ["1.125rem", { "lineHeight": "1.75rem", "letterSpacing": "0em", "fontWeight": "400" }], "display-lg": ["3.5rem", { "lineHeight": "4rem", "letterSpacing": "-0.03em", "fontWeight": "800" }], "label-badge": ["0.6875rem", { "lineHeight": "0.875rem", "letterSpacing": "0.04em", "fontWeight": "700" }] } } } }</script>
+        <style>#avatarMenu{display:none;}#avatarMenu.is-open{display:flex;}</style>
+        <?php endif; ?>
         <link rel="stylesheet" href="marquete/style.css">
     </head>
     <body>
-        <header>
+        <header<?php echo $utilisateurAccueil ? ' class="nx-header-connecte"' : ''; ?>>
             <a class="brand" href="index.php">
                 <img src="marquete/logo.png" alt="NexRaiz" width="170" height="61">
                 <small>PARTICULIERS</small>
@@ -30,18 +36,23 @@ $nbNotifAccueil = $utilisateurAccueil ? notifications_non_lues((int) $utilisateu
                 <?php endif; ?>
             </nav>
             <?php if ($utilisateurAccueil): ?>
-            <div class="nx-account" id="nxAccountWrapper">
-                <a href="notifications.php" class="nx-account-bell" aria-label="Notifications">
-                    <span class="material-symbols-outlined">notifications</span>
-                    <?php if ($nbNotifAccueil > 0): ?>
-                    <span class="nx-account-badge"><?php echo $nbNotifAccueil > 9 ? '9+' : $nbNotifAccueil; ?></span>
-                    <?php endif; ?>
-                </a>
-                <button type="button" class="nx-account-avatar" id="nxAccountToggle"><?php echo htmlspecialchars(mb_strtoupper(mb_substr($utilisateurAccueil['prenom'], 0, 1) . mb_substr($utilisateurAccueil['nom'], 0, 1))); ?></button>
-                <div class="nx-account-menu" id="nxAccountMenu">
-                    <a href="mon-espace.php">Mon espace</a>
-                    <a href="parametres.php">Paramètres</a>
-                    <a href="logout.php">Déconnexion</a>
+            <div class="flex items-center gap-space-sm shrink-0">
+                <?php render_notification_bell((int) $utilisateurAccueil['id']); ?>
+                <div class="relative" id="avatarMenuWrapper">
+                    <button id="avatarMenuBtn" type="button" class="flex items-center gap-space-2xs pl-1 pr-space-xs py-1 rounded-full hover:bg-surface-container-low transition-colors">
+                        <span class="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1E3E62] text-white flex items-center justify-center font-bold text-[13px] shrink-0"><?php echo htmlspecialchars(mb_strtoupper(mb_substr($utilisateurAccueil['prenom'], 0, 1) . mb_substr($utilisateurAccueil['nom'], 0, 1))); ?></span>
+                        <span class="hidden md:flex flex-col items-start leading-none">
+                            <span class="font-bold text-[13px] text-on-surface"><?php echo htmlspecialchars($utilisateurAccueil['prenom'] . ' ' . $utilisateurAccueil['nom']); ?></span>
+                            <span class="text-[11px] text-secondary">Mon compte</span>
+                        </span>
+                        <span class="material-symbols-outlined text-[18px] text-secondary">expand_more</span>
+                    </button>
+                    <div id="avatarMenu" class="absolute right-0 top-full mt-2 w-52 bg-surface-container-lowest rounded-xl shadow-lg border border-outline-variant/40 p-space-2xs flex-col z-50">
+                        <a href="mon-espace.php" class="px-space-sm py-space-xs rounded-lg text-[14px] text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">dashboard</span>Mon espace</a>
+                        <a href="parametres.php" class="px-space-sm py-space-xs rounded-lg text-[14px] text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">settings</span>Paramètres</a>
+                        <a href="contact.php" class="px-space-sm py-space-xs rounded-lg text-[14px] text-on-surface hover:bg-surface-container-low transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">support_agent</span>Nous contacter</a>
+                        <a href="logout.php" class="px-space-sm py-space-xs rounded-lg text-[14px] text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">logout</span>Déconnexion</a>
+                    </div>
                 </div>
             </div>
             <?php else: ?>
@@ -233,16 +244,16 @@ $nbNotifAccueil = $utilisateurAccueil ? notifications_non_lues((int) $utilisateu
         <?php if ($utilisateurAccueil): ?>
         <script>
         (function () {
-            var toggle = document.getElementById('nxAccountToggle');
-            var menu = document.getElementById('nxAccountMenu');
-            var wrapper = document.getElementById('nxAccountWrapper');
-            if (!toggle || !menu || !wrapper) return;
-            toggle.addEventListener('click', function (e) {
+            var avatarBtn = document.getElementById('avatarMenuBtn');
+            var avatarMenu = document.getElementById('avatarMenu');
+            var avatarWrapper = document.getElementById('avatarMenuWrapper');
+            if (!avatarBtn || !avatarMenu || !avatarWrapper) return;
+            avatarBtn.addEventListener('click', function (e) {
                 e.stopPropagation();
-                menu.classList.toggle('is-open');
+                avatarMenu.classList.toggle('is-open');
             });
             document.addEventListener('click', function (e) {
-                if (!wrapper.contains(e.target)) menu.classList.remove('is-open');
+                if (!avatarWrapper.contains(e.target)) avatarMenu.classList.remove('is-open');
             });
         })();
         </script>
