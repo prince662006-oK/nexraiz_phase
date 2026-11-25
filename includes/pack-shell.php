@@ -56,7 +56,7 @@ function pack_header_debut(array $client, array $sidebarNav, array $promo): void
 <div class="flex flex-col w-full min-h-[calc(100vh-4rem)] bg-surface">
 <div class="flex w-full flex-1">
 
-  <aside class="hidden lg:flex flex-col w-64 shrink-0 bg-inverse-surface text-inverse-on-surface p-space-md gap-space-2xs">
+  <aside class="hidden lg:flex flex-col w-64 shrink-0 bg-inverse-surface text-inverse-on-surface p-space-md gap-space-2xs nx-sidebar-under-header">
     <h2 class="font-headline-sm text-headline-sm font-bold text-inverse-on-surface px-space-xs pb-space-sm"><?php echo htmlspecialchars($promo['sidebar_titre']); ?></h2>
     <?php foreach ($sidebarNav as $item): ?>
     <a href="<?php echo htmlspecialchars($item['url']); ?>" class="flex items-center gap-space-xs px-space-xs py-space-sm rounded-xl transition-colors <?php echo !empty($item['actif']) ? 'bg-white/10 text-white font-bold' : 'text-inverse-on-surface/75 hover:bg-white/5'; ?>">

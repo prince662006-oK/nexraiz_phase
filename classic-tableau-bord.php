@@ -258,7 +258,7 @@ main{overflow-x:hidden;}
 <main class="flex flex-col w-full min-h-[calc(100vh-4rem)] bg-surface">
 <div class="flex w-full flex-1">
 
-  <aside class="hidden lg:flex flex-col w-64 shrink-0 bg-inverse-surface text-inverse-on-surface p-space-md gap-space-2xs">
+  <aside class="hidden lg:flex flex-col w-64 shrink-0 bg-inverse-surface text-inverse-on-surface p-space-md gap-space-2xs nx-sidebar-under-header">
     <h2 class="font-headline-sm text-headline-sm font-bold text-inverse-on-surface px-space-xs pb-space-sm">Pack Classic</h2>
     <?php foreach ($sidebarNav as $item): ?>
     <?php if ($item['url'] === null): ?>

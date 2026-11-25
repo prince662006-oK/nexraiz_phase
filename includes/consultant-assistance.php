@@ -177,11 +177,12 @@ function render_assistance_dashboard_sidebar(int $packId, string $actif = 'diagn
         <a href="consultant-calendrier-assistance.php" class="flex items-center gap-space-xs px-space-xs py-space-xs rounded-lg text-inverse-on-surface/75 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[18px]">calendar_month</span><span class="font-label-md text-label-md">Calendrier</span></a>
         <a href="modeles-documents.php?pack=assistance" class="flex items-center gap-space-xs px-space-xs py-space-xs rounded-lg text-inverse-on-surface/75 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[18px]">description</span><span class="font-label-md text-label-md">Modèles de documents</span></a>
         <a href="ressources.php?pack=assistance" class="flex items-center gap-space-xs px-space-xs py-space-xs rounded-lg text-inverse-on-surface/75 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[18px]">menu_book</span><span class="font-label-md text-label-md">Base de connaissances</span></a>
-        <a href="admin-messages.php" class="flex items-center justify-between px-space-xs py-space-xs rounded-lg text-inverse-on-surface/75 hover:bg-white/5 transition-colors">
-          <span class="flex items-center gap-space-xs font-label-md text-label-md"><span class="material-symbols-outlined text-[18px]">forum</span>Messages internes</span>
+        <a href="admin-messages.php" class="flex items-center gap-space-xs px-space-xs py-space-xs rounded-lg text-inverse-on-surface/75 hover:bg-white/5 transition-colors">
+          <span class="material-symbols-outlined text-[18px] shrink-0">forum</span>
+          <span class="font-label-md text-label-md flex-1">Messages internes</span>
           <?php $nbMessagesInternes = messages_internes_non_lus((int) current_user()['id']); ?>
           <?php if ($nbMessagesInternes > 0): ?>
-          <span class="w-5 h-5 rounded-full bg-error text-white flex items-center justify-center font-label-md text-[10px] font-bold"><?php echo $nbMessagesInternes; ?></span>
+          <span class="w-5 h-5 rounded-full bg-error text-white flex items-center justify-center font-label-md text-[10px] font-bold shrink-0"><?php echo $nbMessagesInternes; ?></span>
           <?php endif; ?>
         </a>
         <?php if ((current_user()['role'] ?? '') === 'admin'): ?>
@@ -259,11 +260,12 @@ function render_assistance_dossier_sidebar(int $packId, array $consultant, strin
       <a href="consultant-calendrier-assistance.php" class="flex items-center gap-space-xs px-space-xs py-space-xs rounded-lg text-inverse-on-surface/75 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[18px]">calendar_month</span><span class="font-label-md text-label-md">Calendrier</span></a>
       <a href="contact.php" class="flex items-center gap-space-xs px-space-xs py-space-xs rounded-lg text-inverse-on-surface/75 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[18px]">help</span><span class="font-label-md text-label-md">FAQ interne</span></a>
       <a href="actualites.php?pack=assistance" class="flex items-center gap-space-xs px-space-xs py-space-xs rounded-lg text-inverse-on-surface/75 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[18px]">campaign</span><span class="font-label-md text-label-md">Actualités</span></a>
-      <a href="admin-messages.php" class="flex items-center justify-between px-space-xs py-space-xs rounded-lg text-inverse-on-surface/75 hover:bg-white/5 transition-colors">
-        <span class="flex items-center gap-space-xs font-label-md text-label-md"><span class="material-symbols-outlined text-[18px]">forum</span>Messages internes</span>
+      <a href="admin-messages.php" class="flex items-center gap-space-xs px-space-xs py-space-xs rounded-lg text-inverse-on-surface/75 hover:bg-white/5 transition-colors">
+        <span class="material-symbols-outlined text-[18px] shrink-0">forum</span>
+        <span class="font-label-md text-label-md flex-1">Messages internes</span>
         <?php $nbMessagesInternesDossier = messages_internes_non_lus((int) $consultant['id']); ?>
         <?php if ($nbMessagesInternesDossier > 0): ?>
-        <span class="w-5 h-5 rounded-full bg-error text-white flex items-center justify-center font-label-md text-[10px] font-bold"><?php echo $nbMessagesInternesDossier; ?></span>
+        <span class="w-5 h-5 rounded-full bg-error text-white flex items-center justify-center font-label-md text-[10px] font-bold shrink-0"><?php echo $nbMessagesInternesDossier; ?></span>
         <?php endif; ?>
       </a>
 

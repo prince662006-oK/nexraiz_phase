@@ -73,10 +73,11 @@ function render_admin_sidebar(string $actif = ''): void
         if (!empty($it['super_admin_only']) && !$estSuperAdmin) continue;
         if (in_array($it['cle'], ADMIN_SECTIONS_RESTREIGNABLES, true) && !admin_a_permission($moi, $it['cle'])) continue;
       ?>
-      <a href="<?php echo htmlspecialchars($it['url']); ?>" class="flex items-center justify-between gap-space-xs px-space-xs py-space-sm rounded-xl transition-colors <?php echo $actif === $it['cle'] ? 'bg-primary-container text-white font-bold' : 'text-secondary hover:bg-surface-container-low'; ?>">
-        <span class="flex items-center gap-space-xs font-label-lg text-label-lg"><span class="material-symbols-outlined text-[20px]"><?php echo $it['icone']; ?></span><?php echo htmlspecialchars($it['label']); ?></span>
+      <a href="<?php echo htmlspecialchars($it['url']); ?>" class="flex items-center gap-space-xs px-space-xs py-space-sm rounded-xl transition-colors <?php echo $actif === $it['cle'] ? 'bg-primary-container text-white font-bold' : 'text-secondary hover:bg-surface-container-low'; ?>">
+        <span class="material-symbols-outlined text-[20px] shrink-0"><?php echo $it['icone']; ?></span>
+        <span class="font-label-lg text-label-lg flex-1"><?php echo htmlspecialchars($it['label']); ?></span>
         <?php if (!empty($it['badge'])): ?>
-        <span class="w-5 h-5 rounded-full <?php echo $actif === $it['cle'] ? 'bg-white text-primary' : 'bg-error text-white'; ?> flex items-center justify-center font-label-md text-[10px] font-bold"><?php echo $it['badge']; ?></span>
+        <span class="w-5 h-5 rounded-full <?php echo $actif === $it['cle'] ? 'bg-white text-primary' : 'bg-error text-white'; ?> flex items-center justify-center font-label-md text-[10px] font-bold shrink-0"><?php echo $it['badge']; ?></span>
         <?php endif; ?>
       </a>
       <?php endforeach; ?>

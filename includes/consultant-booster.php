@@ -383,11 +383,12 @@ function render_booster_sidebar(int $packId, string $actif = 'pack'): void
       <a href="modeles-documents.php?pack=booster" class="flex items-center gap-space-xs px-space-xs py-space-sm rounded-xl text-inverse-on-surface/75 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[20px]">construction</span><span class="font-label-lg text-label-lg">Outils &amp; modèles</span></a>
       <a href="consultant-calendrier-booster.php" class="flex items-center gap-space-xs px-space-xs py-space-sm rounded-xl text-inverse-on-surface/75 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[20px]">calendar_month</span><span class="font-label-lg text-label-lg">Calendrier</span></a>
       <a href="consultant-reporting-booster.php" class="flex items-center gap-space-xs px-space-xs py-space-sm rounded-xl text-inverse-on-surface/75 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span class="font-label-lg text-label-lg">Reporting</span></a>
-      <a href="admin-messages.php" class="flex items-center justify-between px-space-xs py-space-sm rounded-xl text-inverse-on-surface/75 hover:bg-white/5 transition-colors">
-        <span class="flex items-center gap-space-xs font-label-lg text-label-lg"><span class="material-symbols-outlined text-[20px]">forum</span>Messages internes</span>
+      <a href="admin-messages.php" class="flex items-center gap-space-xs px-space-xs py-space-sm rounded-xl text-inverse-on-surface/75 hover:bg-white/5 transition-colors">
+        <span class="material-symbols-outlined text-[20px] shrink-0">forum</span>
+        <span class="font-label-lg text-label-lg flex-1">Messages internes</span>
         <?php $nbMessagesInternes = messages_internes_non_lus((int) current_user()['id']); ?>
         <?php if ($nbMessagesInternes > 0): ?>
-        <span class="w-5 h-5 rounded-full bg-error text-white flex items-center justify-center font-label-md text-[10px] font-bold"><?php echo $nbMessagesInternes; ?></span>
+        <span class="w-5 h-5 rounded-full bg-error text-white flex items-center justify-center font-label-md text-[10px] font-bold shrink-0"><?php echo $nbMessagesInternes; ?></span>
         <?php endif; ?>
       </a>
 

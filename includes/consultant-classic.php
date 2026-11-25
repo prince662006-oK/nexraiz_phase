@@ -215,7 +215,7 @@ function render_classic_sidebar(array $dossiers, int $packId): void
     rsort($moisDisponibles);
     $moisNomsCourts = [1 => 'Janv.', 2 => 'Févr.', 3 => 'Mars', 4 => 'Avr.', 5 => 'Mai', 6 => 'Juin', 7 => 'Juil.', 8 => 'Août', 9 => 'Sept.', 10 => 'Oct.', 11 => 'Nov.', 12 => 'Déc.'];
     ?>
-    <aside class="hidden lg:flex flex-col w-64 shrink-0 border-r border-outline-variant/50 bg-surface-container-lowest p-space-md gap-space-2xs overflow-y-auto min-h-0">
+    <aside class="hidden lg:flex flex-col w-64 shrink-0 border-r border-outline-variant/50 bg-surface-container-lowest p-space-md gap-space-2xs overflow-y-auto min-h-0 nx-sidebar-nocollapse">
       <a href="consultant-analyse-classic.php" class="flex items-center gap-space-xs px-space-xs py-space-sm rounded-xl <?php echo $surPageAnalyses && $vueActive === '' && $posteFiltre === '' && $sourceFiltre === '' && $moisFiltre === '' ? 'bg-primary-container text-white font-bold' : 'border border-outline-variant text-on-surface hover:bg-surface-container-low'; ?> mb-space-xs"><span class="material-symbols-outlined text-[18px]">diversity_3</span>Espace NexRaiz : Analyse</a>
 
       <span class="font-label-md text-[10px] uppercase tracking-wider text-secondary px-space-xs pb-space-2xs">Menu</span>
