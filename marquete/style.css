@@ -104,10 +104,6 @@ nav a:hover {
     font-size: 14px
 }
 
-header.nx-header-connecte {
-    height: 80px
-}
-
 .hero {
     display: grid;
     grid-template-columns: 1.08fr 1fr;
