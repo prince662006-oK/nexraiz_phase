@@ -104,6 +104,91 @@ nav a:hover {
     font-size: 14px
 }
 
+.nx-account {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: relative
+}
+
+.nx-account-bell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    color: var(--navy)
+}
+
+.nx-account-bell:hover {
+    background: #f1f4f8
+}
+
+.nx-account-bell .material-symbols-outlined {
+    font-size: 22px
+}
+
+.nx-account-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: #d03b3b;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1
+}
+
+.nx-account-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #fff;
+    border: 0;
+    font-weight: 700;
+    font-size: 14px
+}
+
+.nx-account-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 12px);
+    background: #fff;
+    border: 1px solid #d7e1ec;
+    border-radius: 10px;
+    box-shadow: 0 12px 30px rgba(16, 43, 80, .12);
+    min-width: 180px;
+    padding: 6px;
+    z-index: 50
+}
+
+.nx-account-menu.is-open {
+    display: flex
+}
+
+.nx-account-menu a {
+    padding: 10px 12px;
+    border-radius: 7px;
+    font-size: 14px;
+    color: var(--navy)
+}
+
+.nx-account-menu a:hover {
+    background: #f1f4f8
+}
+
 .hero {
     display: grid;
     grid-template-columns: 1.08fr 1fr;

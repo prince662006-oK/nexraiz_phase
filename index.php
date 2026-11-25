@@ -1,4 +1,8 @@
-<?php require __DIR__ . '/includes/bootstrap.php'; ?>
+<?php
+require __DIR__ . '/includes/bootstrap.php';
+$utilisateurAccueil = current_user();
+$nbNotifAccueil = $utilisateurAccueil ? notifications_non_lues((int) $utilisateurAccueil['id']) : 0;
+?>
 <!doctype html>
 <html lang="fr">
     <head>
@@ -8,6 +12,7 @@
         <meta name="description" content="Emploi, évolution, difficultés au travail, équilibre : découvrez les accompagnements NexRaiz pour votre vie professionnelle.">
         <link rel="icon" href="uploads/LOGO0.png" type="image/png">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
         <link rel="stylesheet" href="marquete/style.css">
     </head>
     <body>
@@ -20,11 +25,30 @@
                 <a href="#accompagnements">Nos accompagnements</a>
                 <a href="#approche">Notre approche</a>
                 <a href="#questions">Vos questions</a>
+                <?php if (!$utilisateurAccueil): ?>
                 <a href="mon-espace.php">Mon espace</a>
+                <?php endif; ?>
             </nav>
+            <?php if ($utilisateurAccueil): ?>
+            <div class="nx-account" id="nxAccountWrapper">
+                <a href="notifications.php" class="nx-account-bell" aria-label="Notifications">
+                    <span class="material-symbols-outlined">notifications</span>
+                    <?php if ($nbNotifAccueil > 0): ?>
+                    <span class="nx-account-badge"><?php echo $nbNotifAccueil > 9 ? '9+' : $nbNotifAccueil; ?></span>
+                    <?php endif; ?>
+                </a>
+                <button type="button" class="nx-account-avatar" id="nxAccountToggle"><?php echo htmlspecialchars(mb_strtoupper(mb_substr($utilisateurAccueil['prenom'], 0, 1) . mb_substr($utilisateurAccueil['nom'], 0, 1))); ?></button>
+                <div class="nx-account-menu" id="nxAccountMenu">
+                    <a href="mon-espace.php">Mon espace</a>
+                    <a href="parametres.php">Paramètres</a>
+                    <a href="logout.php">Déconnexion</a>
+                </div>
+            </div>
+            <?php else: ?>
             <button class="btn small" onclick="startQuiz()">
                 Trouver mon parcours <span>↗</span>
             </button>
+            <?php endif; ?>
         </header>
         <main>
              <section class="hero">
@@ -206,6 +230,23 @@
             <div id="modalBody"></div>
         </dialog>
         <script src="marquete/app.js"></script>
+        <?php if ($utilisateurAccueil): ?>
+        <script>
+        (function () {
+            var toggle = document.getElementById('nxAccountToggle');
+            var menu = document.getElementById('nxAccountMenu');
+            var wrapper = document.getElementById('nxAccountWrapper');
+            if (!toggle || !menu || !wrapper) return;
+            toggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                menu.classList.toggle('is-open');
+            });
+            document.addEventListener('click', function (e) {
+                if (!wrapper.contains(e.target)) menu.classList.remove('is-open');
+            });
+        })();
+        </script>
+        <?php endif; ?>
         <?php render_chatbot_widget(); ?>
     </body>
 </html>
