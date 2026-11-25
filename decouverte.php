@@ -293,7 +293,7 @@ main{overflow-x:hidden;}
         <p class="font-body-md text-body-md text-[#444653] mt-space-sm max-w-xl leading-relaxed">
           Un support simple pour noter dates, faits et témoins au fur et à mesure — utile pour y voir clair, et pour préparer votre dossier si vous décidez d'aller plus loin.
         </p>
-        <a href="ressources-assistance/journal-des-faits.txt" download class="mt-space-lg inline-flex items-center gap-space-xs h-12 px-space-lg rounded-lg bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-label-lg text-label-lg transition-colors shadow-md">
+        <a href="ressources-assistance/journal-des-faits.pdf" download class="mt-space-lg inline-flex items-center gap-space-xs h-12 px-space-lg rounded-lg bg-[#2563EB] hover:bg-[#1d4ed8] text-white font-label-lg text-label-lg transition-colors shadow-md">
           <span class="material-symbols-outlined text-[18px]">download</span>
           <span>Télécharger gratuitement</span>
         </a>
