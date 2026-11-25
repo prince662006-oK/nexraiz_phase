@@ -63,6 +63,42 @@ foreach ($packs as $p) {
     ];
 }
 
+// --- Palette catégorielle fixe pour les graphiques (ordre jamais permuté). ---
+$paletteCategorique = ['#2a78d6', '#eb6834', '#1baf7a', '#eda100', '#e87ba4', '#008300', '#6250d6', '#e34948'];
+
+// --- Revenu encaissé par mois, 6 derniers mois (pour le graphique). ---
+$moisLabels = ['01' => 'Jan', '02' => 'Fév', '03' => 'Mar', '04' => 'Avr', '05' => 'Mai', '06' => 'Juin', '07' => 'Juil', '08' => 'Août', '09' => 'Sept', '10' => 'Oct', '11' => 'Nov', '12' => 'Déc'];
+$stmt = db()->query(
+    "SELECT DATE_FORMAT(updated_at, '%Y-%m') AS mois, SUM(montant) AS total
+     FROM paiements
+     WHERE statut = 'paye' AND updated_at >= DATE_SUB(CURDATE(), INTERVAL 5 MONTH)
+     GROUP BY mois"
+);
+$revenuParMoisBrut = [];
+foreach ($stmt->fetchAll() as $r) {
+    $revenuParMoisBrut[$r['mois']] = (float) $r['total'];
+}
+$revenuMensuel = [];
+for ($i = 5; $i >= 0; $i--) {
+    $cle = date('Y-m', strtotime("-{$i} months"));
+    $revenuMensuel[] = ['label' => $moisLabels[substr($cle, 5, 2)], 'valeur' => $revenuParMoisBrut[$cle] ?? 0.0];
+}
+
+// --- Dossiers en cours par consultant, tous packs confondus (top 8). ---
+$stmt = db()->query(
+    "SELECT u.prenom, u.nom, COUNT(*) AS nb
+     FROM dossiers d
+     JOIN users u ON u.id = d.consultant_id
+     WHERE d.statut = 'en_cours'
+     GROUP BY d.consultant_id
+     ORDER BY nb DESC
+     LIMIT 8"
+);
+$chargeConsultants = [];
+foreach ($stmt->fetchAll() as $c) {
+    $chargeConsultants[] = ['label' => trim($c['prenom'] . ' ' . mb_substr($c['nom'], 0, 1) . '.'), 'valeur' => (int) $c['nb']];
+}
+
 // --- Activité récente, tous packs confondus. ---
 $stmt = db()->query(
     "SELECT a.texte, a.created_at, ds.numero, pk.nom AS pack_nom
@@ -166,6 +202,36 @@ render_head('Espace NexRaiz — Direction', 'Tableau de bord du super administra
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-space-sm">
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-sm">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Dossiers par pack</h2>
+        <div class="relative h-56"><canvas id="chartPacks" role="img" aria-label="Répartition des dossiers par pack"></canvas></div>
+        <ul class="flex flex-col gap-1 pt-space-xs">
+          <?php foreach ($comparatifPacks as $i => $c): ?>
+          <li class="flex items-center gap-2 font-body-sm text-[12px] text-on-surface">
+            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background:<?php echo htmlspecialchars($paletteCategorique[$i % count($paletteCategorique)]); ?>"></span>
+            <?php echo htmlspecialchars($c['nom']); ?>
+            <span class="text-secondary ml-auto"><?php echo $c['dossiers']; ?></span>
+          </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+
+      <div class="lg:col-span-2 bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-sm">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Revenu encaissé — 6 derniers mois</h2>
+        <div class="relative h-56"><canvas id="chartRevenu" role="img" aria-label="Revenu encaissé par mois sur les 6 derniers mois"></canvas></div>
+      </div>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-sm">
+      <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Dossiers en cours par consultant</h2>
+      <?php if (!$chargeConsultants): ?>
+      <p class="font-body-sm text-body-sm text-secondary">Aucun dossier en cours affecté pour le moment.</p>
+      <?php else: ?>
+      <div class="relative" style="height:<?php echo max(160, count($chargeConsultants) * 36); ?>px"><canvas id="chartConsultants" role="img" aria-label="Nombre de dossiers en cours par consultant"></canvas></div>
+      <?php endif; ?>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-space-sm">
       <div class="lg:col-span-2 bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-sm">
         <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Activité récente (tous packs)</h2>
         <?php if (!$activitesRecentes): ?>
@@ -206,5 +272,85 @@ render_head('Espace NexRaiz — Direction', 'Tableau de bord du super administra
   </footer>
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>
+(function () {
+  var paletteCategorique = <?php echo json_encode($paletteCategorique); ?>;
+  var packsData = <?php echo json_encode(array_map(fn($c) => ['label' => $c['nom'], 'valeur' => $c['dossiers']], $comparatifPacks)); ?>;
+  var revenuData = <?php echo json_encode($revenuMensuel); ?>;
+  var consultantsData = <?php echo json_encode($chargeConsultants); ?>;
+
+  var inkSecondary = '#52514e';
+  var gridline = '#e1e0d9';
+  Chart.defaults.font.family = "system-ui, -apple-system, 'Segoe UI', sans-serif";
+  Chart.defaults.color = inkSecondary;
+
+  new Chart(document.getElementById('chartPacks'), {
+    type: 'doughnut',
+    data: {
+      labels: packsData.map(function (p) { return p.label; }),
+      datasets: [{
+        data: packsData.map(function (p) { return p.valeur; }),
+        backgroundColor: packsData.map(function (p, i) { return paletteCategorique[i % paletteCategorique.length]; }),
+        borderColor: '#fcfcfb',
+        borderWidth: 2,
+      }],
+    },
+    options: {
+      cutout: '62%',
+      plugins: { legend: { display: false } },
+    },
+  });
+
+  new Chart(document.getElementById('chartRevenu'), {
+    type: 'line',
+    data: {
+      labels: revenuData.map(function (r) { return r.label; }),
+      datasets: [{
+        label: 'Revenu encaissé (XOF)',
+        data: revenuData.map(function (r) { return r.valeur; }),
+        borderColor: '#2a78d6',
+        backgroundColor: 'rgba(42, 120, 214, 0.12)',
+        borderWidth: 2,
+        pointRadius: 4,
+        pointBackgroundColor: '#2a78d6',
+        fill: true,
+        tension: 0.3,
+      }],
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true, grid: { color: gridline }, ticks: { callback: function (v) { return new Intl.NumberFormat('fr-FR').format(v); } } },
+        x: { grid: { display: false } },
+      },
+      plugins: { legend: { display: false } },
+    },
+  });
+
+  <?php if ($chargeConsultants): ?>
+  new Chart(document.getElementById('chartConsultants'), {
+    type: 'bar',
+    data: {
+      labels: consultantsData.map(function (c) { return c.label; }),
+      datasets: [{
+        label: 'Dossiers en cours',
+        data: consultantsData.map(function (c) { return c.valeur; }),
+        backgroundColor: '#6250d6',
+        borderRadius: 4,
+        maxBarThickness: 22,
+      }],
+    },
+    options: {
+      indexAxis: 'y',
+      scales: {
+        x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: gridline } },
+        y: { grid: { display: false } },
+      },
+      plugins: { legend: { display: false } },
+    },
+  });
+  <?php endif; ?>
+})();
+</script>
 </body>
 </html>

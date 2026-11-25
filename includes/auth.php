@@ -133,6 +133,53 @@ function require_role(array $roles, string $redirectTo): array
     return $user;
 }
 
+/**
+ * Sections restreignables de l'espace admin (voir render_admin_sidebar()
+ * dans includes/consultant-sidebar-router.php, qui utilise la même liste
+ * de clés). "dashboard" et "utilisateurs" ne sont volontairement pas
+ * restreignables : un admin doit toujours pouvoir voir le tableau de bord
+ * global et gérer les accès, pour ne jamais se retrouver bloqué de partout
+ * sans porte de sortie.
+ */
+const ADMIN_SECTIONS_RESTREIGNABLES = ['dossiers', 'paiements', 'rendezvous', 'ressources', 'formations', 'modeles', 'actualites'];
+
+/**
+ * Un super_admin a toujours accès à tout. Un admin a accès à tout tant que
+ * users.admin_permissions_json est NULL (comportement historique, par
+ * défaut pour tous les comptes existants) ; sinon, seulement aux sections
+ * listées dans ce tableau JSON. Lu en base à chaque appel (pas depuis la
+ * session, qui ne contient qu'un instantané limité posé à la connexion —
+ * voir login_user()) : une restriction posée par un super_admin doit
+ * s'appliquer immédiatement, sans attendre une reconnexion.
+ */
+function admin_a_permission(array $user, string $section): bool
+{
+    if ($user['role'] === 'super_admin') {
+        return true;
+    }
+    $stmt = db()->prepare('SELECT admin_permissions_json FROM users WHERE id = ?');
+    $stmt->execute([(int) $user['id']]);
+    $json = $stmt->fetchColumn();
+    if ($json === null || $json === false) {
+        return true;
+    }
+    $permissions = json_decode($json, true);
+    return is_array($permissions) && in_array($section, $permissions, true);
+}
+
+/**
+ * Comme require_role(), en plus restreint : exige que le compte ait accès
+ * à la section $section de l'espace admin (voir admin_a_permission()).
+ * À appeler juste après require_role(['admin', 'super_admin'], ...).
+ */
+function require_permission_section(array $user, string $section, string $redirectTo): void
+{
+    if (!admin_a_permission($user, $section)) {
+        header('Location: ' . $redirectTo);
+        exit;
+    }
+}
+
 function logout(): void
 {
     nx_session_start();

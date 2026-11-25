@@ -707,6 +707,24 @@ DELIMITER ;
 CALL nx_migration_lettre_hash();
 DROP PROCEDURE nx_migration_lettre_hash;
 
+-- admin_permissions_json : NULL = l'administrateur a accès à toutes les
+-- sections de l'espace admin (comportement historique, rien ne change pour
+-- les comptes existants) ; un tableau JSON de clés de section ("dossiers",
+-- "paiements", ...) restreint l'accès à celles-ci seulement. Ne concerne
+-- jamais un super_admin, qui a toujours accès à tout. Même motif que les
+-- deux migrations ci-dessus (évite information_schema, avale l'erreur 1060
+-- si la colonne existe déjà).
+DROP PROCEDURE IF EXISTS nx_migration_admin_permissions;
+DELIMITER $$
+CREATE PROCEDURE nx_migration_admin_permissions()
+BEGIN
+    DECLARE CONTINUE HANDLER FOR 1060 BEGIN END;
+    ALTER TABLE users ADD COLUMN admin_permissions_json TEXT NULL COMMENT 'Tableau JSON des sections admin autorisées ; NULL = toutes (voir includes/auth.php : admin_a_permission())' AFTER pack_id;
+END$$
+DELIMITER ;
+CALL nx_migration_admin_permissions();
+DROP PROCEDURE nx_migration_admin_permissions;
+
 -- Offres d'emploi/stage/alternance/mission. source/recruiter_id préparent le
 -- futur portail recruteur (non construit ici) sans qu'aucune UI recruteur
 -- n'existe encore — recruiter_id référence users(id) mais aucun rôle

@@ -14,6 +14,7 @@ require_once __DIR__ . '/includes/consultant-sidebar-router.php';
 require_once __DIR__ . '/includes/formations.php';
 
 $consultant = require_role(['consultant', 'admin'], 'mon-espace.php');
+require_permission_section($consultant, 'formations', 'mon-espace.php');
 $userId = (int) $consultant['id'];
 $estAdmin = in_array($consultant['role'], ['admin', 'super_admin'], true);
 

@@ -84,6 +84,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             db()->prepare('UPDATE users SET actif = 1 - actif WHERE id = ?')->execute([$userId]);
             $succes = 'Statut du compte mis à jour.';
         }
+    } elseif ($action === 'changer_permissions') {
+        $userId = (int) ($_POST['user_id'] ?? 0);
+        $stmt = db()->prepare('SELECT role FROM users WHERE id = ?');
+        $stmt->execute([$userId]);
+        $roleCible = $stmt->fetchColumn();
+        if ($roleCible !== 'admin') {
+            // Un super_admin a toujours accès à tout, et les permissions
+            // par section ne s'appliquent qu'aux comptes administrateur —
+            // pas aux consultants (modèle d'accès différent, par pack).
+            $erreurs[] = 'Les permissions par section ne concernent que les comptes administrateur.';
+        } elseif (!empty($_POST['tout'])) {
+            db()->prepare('UPDATE users SET admin_permissions_json = NULL WHERE id = ?')->execute([$userId]);
+            $succes = 'Permissions mises à jour : accès à tout.';
+        } else {
+            $sections = array_values(array_intersect($_POST['sections'] ?? [], ADMIN_SECTIONS_RESTREIGNABLES));
+            db()->prepare('UPDATE users SET admin_permissions_json = ? WHERE id = ?')->execute([json_encode($sections, JSON_UNESCAPED_UNICODE), $userId]);
+            $succes = 'Permissions mises à jour.';
+        }
     } elseif ($action === 'reinitialiser_mot_de_passe') {
         $userId = (int) ($_POST['user_id'] ?? 0);
         $stmt = db()->prepare('SELECT email, role FROM users WHERE id = ?');
@@ -109,9 +127,13 @@ $packsParId = [];
 foreach ($packs as $p) { $packsParId[$p['id']] = $p; }
 
 $roleLabels = ['consultant' => 'Consultant', 'admin' => 'Administrateur', 'super_admin' => 'Super administrateur'];
+$sectionLabels = [
+    'dossiers' => 'Dossiers', 'paiements' => 'Paiements', 'rendezvous' => 'Rendez-vous',
+    'ressources' => 'Ressources', 'formations' => 'Formations', 'modeles' => 'Modèles de documents', 'actualites' => 'Actualités',
+];
 
 $recherche = trim($_GET['q'] ?? '');
-$sql = "SELECT id, role, pack_id, actif, nom, prenom, email, telephone, created_at FROM users WHERE role IN ('consultant', 'admin', 'super_admin')";
+$sql = "SELECT id, role, pack_id, actif, nom, prenom, email, telephone, created_at, admin_permissions_json FROM users WHERE role IN ('consultant', 'admin', 'super_admin')";
 $params = [];
 if ($recherche !== '') {
     $sql .= ' AND (nom LIKE ? OR prenom LIKE ? OR email LIKE ?)';
@@ -280,6 +302,28 @@ render_head('Espace NexRaiz — Utilisateurs', 'Gestion des comptes consultants 
                 <span class="font-body-sm text-[11px] text-secondary"><?php echo $estMoi ? '—' : 'Réservé au super admin'; ?></span>
                 <?php else: ?>
                 <div class="flex items-center justify-end gap-1">
+                  <?php if ($u['role'] === 'admin'): ?>
+                  <details class="inline-block text-left">
+                    <summary class="h-8 px-space-xs rounded-lg border border-outline-variant font-label-md text-[11px] text-on-surface hover:bg-surface-container-lowest transition-colors cursor-pointer list-none">Permissions</summary>
+                    <?php $permsActuelles = $u['admin_permissions_json'] !== null ? json_decode($u['admin_permissions_json'], true) : null; ?>
+                    <form method="post" class="mt-space-2xs w-52 bg-surface-container-low rounded-xl p-space-sm flex flex-col gap-space-2xs">
+                      <?php echo csrf_field(); ?>
+                      <input type="hidden" name="action" value="changer_permissions">
+                      <input type="hidden" name="user_id" value="<?php echo $u['id']; ?>">
+                      <label class="flex items-center gap-1 font-body-sm text-[12px] text-on-surface font-semibold">
+                        <input type="checkbox" name="tout" value="1" <?php echo $permsActuelles === null ? 'checked' : ''; ?> onchange="var f=this.closest('form');f.querySelectorAll('.perm-section').forEach(function(c){c.disabled=f.tout.checked;});">
+                        Accès à tout
+                      </label>
+                      <?php foreach (ADMIN_SECTIONS_RESTREIGNABLES as $section): ?>
+                      <label class="flex items-center gap-1 font-body-sm text-[12px] text-secondary pl-space-sm">
+                        <input type="checkbox" class="perm-section" name="sections[]" value="<?php echo $section; ?>" <?php echo ($permsActuelles !== null && in_array($section, $permsActuelles, true)) ? 'checked' : ''; ?> <?php echo $permsActuelles === null ? 'disabled' : ''; ?>>
+                        <?php echo htmlspecialchars($sectionLabels[$section]); ?>
+                      </label>
+                      <?php endforeach; ?>
+                      <button type="submit" class="h-8 mt-space-2xs rounded-lg bg-primary-container text-white font-label-md text-[11px]">Enregistrer</button>
+                    </form>
+                  </details>
+                  <?php endif; ?>
                   <form method="post">
                     <?php echo csrf_field(); ?>
                     <input type="hidden" name="action" value="reinitialiser_mot_de_passe">

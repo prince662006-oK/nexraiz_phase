@@ -11,6 +11,7 @@ require_once __DIR__ . '/includes/consultant-sidebar-router.php';
 require_once __DIR__ . '/includes/payments.php';
 
 $admin = require_role(['admin', 'super_admin'], 'mon-espace.php');
+require_permission_section($admin, 'paiements', 'admin-dashboard.php');
 $estSuperAdmin = $admin['role'] === 'super_admin';
 
 $succes = '';

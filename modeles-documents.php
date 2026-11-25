@@ -9,6 +9,7 @@ require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/consultant-sidebar-router.php';
 
 $consultant = require_role(['consultant', 'admin'], 'mon-espace.php');
+require_permission_section($consultant, 'modeles', 'mon-espace.php');
 $estAdmin = in_array($consultant['role'], ['admin', 'super_admin'], true);
 
 $categorieLabels = [

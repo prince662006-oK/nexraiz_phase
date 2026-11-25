@@ -20,6 +20,7 @@ require_once __DIR__ . '/includes/consultant-sidebar-router.php';
 require_once __DIR__ . '/includes/ressources.php';
 
 $consultant = require_role(['consultant', 'admin'], 'mon-espace.php');
+require_permission_section($consultant, 'ressources', 'mon-espace.php');
 $estAdmin = in_array($consultant['role'], ['admin', 'super_admin'], true);
 $categoriesValides = ['base_connaissances', 'guide', 'outil', 'faq'];
 

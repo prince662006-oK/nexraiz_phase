@@ -71,6 +71,7 @@ function render_admin_sidebar(string $actif = ''): void
       <span class="font-label-md text-[10px] uppercase tracking-wider text-secondary px-space-xs pb-space-2xs"><?php echo $estSuperAdmin ? 'Direction' : 'Administration'; ?></span>
       <?php foreach ($items as $it):
         if (!empty($it['super_admin_only']) && !$estSuperAdmin) continue;
+        if (in_array($it['cle'], ADMIN_SECTIONS_RESTREIGNABLES, true) && !admin_a_permission($moi, $it['cle'])) continue;
       ?>
       <a href="<?php echo htmlspecialchars($it['url']); ?>" class="flex items-center justify-between gap-space-xs px-space-xs py-space-sm rounded-xl transition-colors <?php echo $actif === $it['cle'] ? 'bg-primary-container text-white font-bold' : 'text-secondary hover:bg-surface-container-low'; ?>">
         <span class="flex items-center gap-space-xs font-label-lg text-label-lg"><span class="material-symbols-outlined text-[20px]"><?php echo $it['icone']; ?></span><?php echo htmlspecialchars($it['label']); ?></span>

@@ -8,6 +8,7 @@ require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/consultant-sidebar-router.php';
 
 $admin = require_role(['admin', 'super_admin'], 'mon-espace.php');
+require_permission_section($admin, 'rendezvous', 'admin-dashboard.php');
 $estSuperAdmin = $admin['role'] === 'super_admin';
 
 $succes = '';
