@@ -122,6 +122,8 @@ aside.w-64:not(.nx-sidebar-nocollapse) p,aside.w-64:not(.nx-sidebar-nocollapse) 
 aside.w-64:not(.nx-sidebar-nocollapse):hover p,aside.w-64:not(.nx-sidebar-nocollapse):hover h2{display:block;}
 aside.w-64:not(.nx-sidebar-nocollapse) a:not(:has(.material-symbols-outlined)):not(:has(img)){display:none;}
 aside.w-64:not(.nx-sidebar-nocollapse):hover a:not(:has(.material-symbols-outlined)):not(:has(img)){display:flex;}
+aside.w-64:not(.nx-sidebar-nocollapse) .rounded-2xl a{display:none;}
+aside.w-64:not(.nx-sidebar-nocollapse):hover .rounded-2xl a{display:flex;}
 aside.w-64:not(.nx-sidebar-nocollapse) a:not([class*="bg-primary-container"]):not([class*="bg-white/10"]) > .material-symbols-outlined{color:#2563EB;}
 }
 </style>
