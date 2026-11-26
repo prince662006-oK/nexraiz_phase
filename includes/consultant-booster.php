@@ -405,7 +405,7 @@ function render_booster_sidebar(int $packId, string $actif = 'pack'): void
         <p class="font-label-lg text-label-lg font-bold">Besoin d'aide ?</p>
         <p class="font-body-sm text-[11px] text-inverse-on-surface/70">Consultez nos guides et ressources consultants.</p>
         <a href="contact.php" class="h-9 rounded-xl bg-primary-container text-white font-label-md text-label-md flex items-center justify-center hover:opacity-90 transition-opacity">Accéder aux ressources</a>
-        <a href="logout.php" class="h-9 rounded-xl border border-white/20 text-inverse-on-surface font-label-md text-label-md flex items-center justify-center gap-1 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[16px]">logout</span>Déconnexion</a>
+        <a href="logout.php" class="h-9 rounded-xl border border-white/20 text-inverse-on-surface font-label-md text-label-md flex items-center justify-center gap-1 hover:bg-white/5 transition-colors"><span class="material-symbols-outlined text-[16px] shrink-0">logout</span><span>Déconnexion</span></a>
       </div>
     </aside>
     <?php

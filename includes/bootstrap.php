@@ -124,6 +124,8 @@ aside.w-64:not(.nx-sidebar-nocollapse) a:not(:has(.material-symbols-outlined)):n
 aside.w-64:not(.nx-sidebar-nocollapse):hover a:not(:has(.material-symbols-outlined)):not(:has(img)){display:flex;}
 aside.w-64:not(.nx-sidebar-nocollapse) .rounded-2xl a{display:none;}
 aside.w-64:not(.nx-sidebar-nocollapse):hover .rounded-2xl a{display:flex;}
+aside.w-64:not(.nx-sidebar-nocollapse) .rounded-2xl{align-items:center;}
+aside.w-64:not(.nx-sidebar-nocollapse):hover .rounded-2xl{align-items:stretch;}
 aside.w-64:not(.nx-sidebar-nocollapse) a:not([class*="bg-primary-container"]):not([class*="bg-white/10"]) > .material-symbols-outlined{color:#2563EB;}
 }
 </style>
