@@ -108,25 +108,12 @@ $tm = $typeMeta[$offre['type']] ?? $typeMeta['emploi'];
 
 render_head('Pack Classic — Postuler via NexRaiz');
 ?>
-<header class="sticky top-0 z-40 bg-surface-container-lowest/95 backdrop-blur-xl border-b border-outline-variant/50">
-  <div class="h-16 px-gutter-mobile lg:px-gutter-desktop flex items-center justify-between gap-space-md">
-    <a href="index.php" class="flex items-center gap-2 shrink-0">
-      <img src="uploads/LOGO0.png" alt="NexRaiz" class="h-9 w-auto">
-      <span class="hidden md:flex flex-col leading-none">
-        <span class="font-headline-sm text-headline-sm font-bold text-on-surface">NexRaiz</span>
-        <span class="font-body-sm text-[10px] text-secondary">Votre avenir, notre priorité</span>
-      </span>
-    </a>
-    <div class="flex items-center gap-space-xs shrink-0">
-      <?php render_notification_bell((int) $utilisateur['id']); ?>
-      <span class="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1E3E62] text-white flex items-center justify-center font-label-md text-[13px] font-bold shrink-0"><?php echo htmlspecialchars(mb_strtoupper(mb_substr($utilisateur['prenom'], 0, 1) . mb_substr($utilisateur['nom'], 0, 1))); ?></span>
-    </div>
-  </div>
-</header>
-
 <div class="flex w-full min-h-screen bg-surface">
 
-  <aside class="hidden lg:flex flex-col w-64 shrink-0 bg-inverse-surface text-inverse-on-surface p-space-md gap-space-2xs nx-sidebar-under-header">
+  <aside class="hidden lg:flex flex-col w-64 shrink-0 bg-inverse-surface text-inverse-on-surface p-space-md gap-space-2xs overflow-y-auto min-h-0">
+    <a href="index.php" class="flex items-center gap-1.5 pb-space-xs">
+      <span class="inline-flex bg-white rounded-lg px-2 py-1"><img src="uploads/LOGO0.png" alt="NexRaiz" class="h-9 w-auto"></span>
+    </a>
     <h2 class="font-headline-sm text-headline-sm font-bold text-inverse-on-surface px-space-xs pb-space-sm">Pack Classic</h2>
     <?php foreach ($sidebarNav as $item): ?>
     <a href="<?php echo htmlspecialchars($item['url']); ?>" class="flex items-center gap-space-xs px-space-xs py-space-sm rounded-xl transition-colors <?php echo !empty($item['actif']) ? 'bg-white/10 text-white font-bold' : 'text-inverse-on-surface/75 hover:bg-white/5'; ?>">
@@ -143,6 +130,15 @@ render_head('Pack Classic — Postuler via NexRaiz');
   </aside>
 
   <div class="flex-1 flex flex-col min-w-0">
+    <header class="h-16 shrink-0 border-b border-outline-variant/50 bg-surface-container-lowest flex items-center gap-space-md px-gutter-mobile lg:px-gutter-desktop">
+      <a href="index.php" class="flex items-center gap-1.5 shrink-0 lg:hidden">
+        <img src="uploads/LOGO0.png" alt="NexRaiz" class="h-9 w-auto">
+      </a>
+      <div class="flex items-center gap-space-xs shrink-0 ml-auto">
+        <?php render_notification_bell((int) $utilisateur['id']); ?>
+        <span class="w-9 h-9 rounded-full bg-gradient-to-br from-[#2563EB] to-[#1E3E62] text-white flex items-center justify-center font-label-md text-[13px] font-bold shrink-0"><?php echo htmlspecialchars(mb_strtoupper(mb_substr($utilisateur['prenom'], 0, 1) . mb_substr($utilisateur['nom'], 0, 1))); ?></span>
+      </div>
+    </header>
     <main class="flex-1 flex flex-col gap-space-md p-gutter-mobile lg:p-gutter-desktop max-w-6xl">
       <a href="classic-mes-opportunites.php?vue=recommandees&offre=<?php echo $offre['id']; ?>#panneau-detail" class="font-label-md text-label-md text-primary flex items-center gap-1 w-fit"><span class="material-symbols-outlined text-[18px]">arrow_back</span>Retour à mes opportunités</a>
 

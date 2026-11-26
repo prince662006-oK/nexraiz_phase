@@ -114,7 +114,6 @@ function render_head(string $title, string $description = "Le Pack Assistance Ne
 .nx-sidebar-backdrop-visible{display:block;}
 @media(min-width:1024px){
 aside.w-64{position:sticky;top:0;align-self:flex-start;height:100vh;max-height:100vh;overflow-y:auto;overflow-x:hidden;z-index:30;}
-aside.w-64.nx-sidebar-under-header{top:4rem;height:calc(100vh - 4rem);max-height:calc(100vh - 4rem);}
 aside.w-64:not(.nx-sidebar-nocollapse){width:4.5rem;min-width:4.5rem;transition:width .18s ease;}
 aside.w-64:not(.nx-sidebar-nocollapse):hover{width:16rem;min-width:16rem;overflow-x:visible;}
 aside.w-64:not(.nx-sidebar-nocollapse) span:not(.material-symbols-outlined):not(:has(> .material-symbols-outlined)){display:inline-flex;align-items:center;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:opacity .12s ease,max-width .18s ease;}
