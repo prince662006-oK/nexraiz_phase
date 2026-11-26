@@ -42,7 +42,9 @@ render_head('Pack Booster — Découverte', "Le Pack Booster NexRaiz vous accomp
 render_top_header();
 ?>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 main{overflow-x:hidden;}
+main [class*="font-"]{font-family:'Poppins',Arial,sans-serif!important;}
 .reveal-up,.reveal-scale,.reveal-left,.reveal-right{opacity:0;transition:opacity .7s cubic-bezier(.22,.61,.36,1),transform .7s cubic-bezier(.22,.61,.36,1);will-change:opacity,transform;}
 .reveal-up{transform:translateY(24px);}
 .reveal-scale{transform:scale(.94);}
@@ -128,11 +130,7 @@ main{overflow-x:hidden;}
             <li class="flex items-start gap-space-xs"><span class="material-symbols-outlined text-[#FFC700] text-[20px] shrink-0">check_circle</span><span>Une recommandation précise pour la suite de votre accompagnement</span></li>
           </ul>
         </div>
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pt-space-2xs">
-          <div>
-            <span class="font-label-sm text-[11px] uppercase tracking-wider text-[#444653] block">Pack Booster complet</span>
-            <span class="font-title-md text-title-md text-[#13203F] font-bold">150 000 FCFA</span>
-          </div>
+        <div class="flex pt-space-2xs">
           <a href="<?php echo htmlspecialchars(step_url(2, 'booster')); ?>" class="inline-flex items-center justify-center px-space-lg py-3 rounded-lg bg-[#FFC700] text-[#13203F] font-label-lg text-label-lg font-semibold shadow-md hover:bg-[#E6B400] transition-all">
             Réserver mon échange
           </a>
